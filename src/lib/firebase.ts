@@ -9,16 +9,16 @@ export interface LeaderboardEntry {
   id?: string;
   playerName: string;
   email?: string;
-  timeMs: number;
+  score: number;
   createdAt: number;
 }
 
-export async function submitScore(playerName: string, timeMs: number, email = ''): Promise<string | undefined> {
+export async function submitScore(playerName: string, score: number, email = ''): Promise<string | undefined> {
   try {
     const docRef = await addDoc(collection(db, 'leaderboard'), {
       playerName,
       email,
-      timeMs,
+      score,
       createdAt: Date.now(),
     });
     return docRef.id;
@@ -30,7 +30,7 @@ export async function submitScore(playerName: string, timeMs: number, email = ''
 
 export async function getLeaderboard(): Promise<LeaderboardEntry[]> {
   try {
-    const q = query(collection(db, 'leaderboard'), orderBy('timeMs', 'asc'), limit(10));
+    const q = query(collection(db, 'leaderboard'), orderBy('score', 'desc'), limit(10));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as LeaderboardEntry));
   } catch (error) {

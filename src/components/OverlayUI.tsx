@@ -1,16 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { useStore, formatHudTime } from '../store/useStore';
+import { useStore, GAME_DURATION_MS } from '../store/useStore';
 import { submitScore, getLeaderboard, LeaderboardEntry } from '../lib/firebase';
 import { xrStore } from '../store/xr';
 import { asset } from '../lib/asset';
 
-const TARGET_SCORE       = 5;
 const SHOUT_RMS          = 0.18;
-const CATCH_COOLDOWN_MS  = 850;
+const CATCH_COOLDOWN_MS  = 750;
 const PLAY_AGAIN_COOLDOWN = 5;
-
-const CHILI_ACTIVE   = asset('assets/ui/chili_hud_active.png');
-const CHILI_INACTIVE = asset('assets/ui/chili_hud_inactive.png');
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -32,7 +28,7 @@ function drawContain(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: nu
   ctx.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
 }
 
-async function buildShareBlob(time: string): Promise<Blob> {
+async function buildShareBlob(score: number): Promise<Blob> {
   const canvas = document.createElement('canvas');
   canvas.width  = 1080;
   canvas.height = 1920;
@@ -54,11 +50,13 @@ async function buildShareBlob(time: string): Promise<Blob> {
     ctx.textAlign    = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillStyle    = '#70ff70';
-    ctx.font         = '900 142px Saira, Arial, Helvetica, sans-serif';
-    ctx.fillText(time, 540, 1128);
-    ctx.fillStyle = '#ffffff';
-    ctx.font      = 'italic 900 34px Saira, Arial, Helvetica, sans-serif';
-    ctx.fillText('YAKIN BISA LEBIH CEPET?', 540, 1432);
+    ctx.font         = '900 148px Saira, Arial, Helvetica, sans-serif';
+    ctx.fillText(`${score}`, 540, 1080);
+    ctx.font         = '900 58px Saira, Arial, Helvetica, sans-serif';
+    ctx.fillText('CABE!', 540, 1170);
+    ctx.fillStyle    = '#ffffff';
+    ctx.font         = 'italic 900 34px Saira, Arial, Helvetica, sans-serif';
+    ctx.fillText('BISA LEBIH BANYAK?', 540, 1432);
   } catch {
     ctx.fillStyle = '#041006';
     ctx.fillRect(0, 0, 1080, 1920);
@@ -66,14 +64,14 @@ async function buildShareBlob(time: string): Promise<Blob> {
     ctx.font      = '900 96px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(time, 540, 960);
+    ctx.fillText(`${score} CABE`, 540, 960);
   }
 
   return new Promise(resolve => canvas.toBlob(b => resolve(b!), 'image/png'));
 }
 
 export function OverlayUI() {
-  const { gameState, elapsedTime, objects, startGame, playerName, setPlayerName, resetGame } = useStore();
+  const { gameState, elapsedTime, score, startGame, playerName, setPlayerName, resetGame } = useStore();
 
   const [leaderboard,    setLeaderboard]    = useState<LeaderboardEntry[]>([]);
   const [showNotice,     setShowNotice]     = useState(false);
@@ -88,14 +86,34 @@ export function OverlayUI() {
   const [playAgainOff,   setPlayAgainOff]   = useState(false);
   const [playAgainLabel, setPlayAgainLabel] = useState('MAIN LAGI');
   const [missEffect,     setMissEffect]     = useState(false);
+  const [showPlusOne,    setShowPlusOne]    = useState(false);
+  const [scoreBumping,   setScoreBumping]   = useState(false);
+  const [catchFlash,     setCatchFlash]     = useState(false);
 
-  const aimRef           = useRef<HTMLDivElement>(null);
-  const speechRef        = useRef<any>(null);
-  const lastCatchRef     = useRef(0);
-  const meterResetRef    = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const aimRef        = useRef<HTMLDivElement>(null);
+  const speechRef     = useRef<any>(null);
+  const lastCatchRef  = useRef(0);
+  const meterResetRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevScoreRef  = useRef(score);
 
-  const foundCount = objects.filter(o => o.isTarget && o.found).length;
-  const timeStr    = formatHudTime(elapsedTime);
+  const remainMs  = Math.max(0, GAME_DURATION_MS - elapsedTime);
+  const remainSec = Math.ceil(remainMs / 1000);
+  const isUrgent  = remainSec <= 10 && remainSec > 0;
+
+  // ── catch success effects ────────────────────────────────────────────────
+  useEffect(() => {
+    if (score > prevScoreRef.current) {
+      setShowPlusOne(true);
+      setScoreBumping(true);
+      setCatchFlash(true);
+      const t1 = setTimeout(() => setShowPlusOne(false), 900);
+      const t2 = setTimeout(() => setScoreBumping(false), 420);
+      const t3 = setTimeout(() => setCatchFlash(false), 280);
+      prevScoreRef.current = score;
+      return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+    }
+    prevScoreRef.current = score;
+  }, [score]);
 
   // ── voice meter helpers ──────────────────────────────────────────────────
   function setMeter(level: number) {
@@ -124,7 +142,7 @@ export function OverlayUI() {
   useEffect(() => {
     const onMiss = () => {
       setMissEffect(true);
-      setTimeout(() => setMissEffect(false), 300);
+      setTimeout(() => setMissEffect(false), 320);
     };
     window.addEventListener('catch-miss', onMiss);
     return () => window.removeEventListener('catch-miss', onMiss);
@@ -146,7 +164,7 @@ export function OverlayUI() {
 
     let alive = true;
     let audioCtx: AudioContext | null = null;
-    let rafId:    number | null = null;
+    let rafId: number | null = null;
 
     (async () => {
       try {
@@ -179,14 +197,13 @@ export function OverlayUI() {
       }
     })();
 
-    // Speech recognition (primary on Android, fallback on iOS)
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (SR) {
       const rec = new SR();
-      rec.continuous       = true;
-      rec.interimResults   = true;
-      rec.lang             = 'id-ID';
-      rec.maxAlternatives  = 3;
+      rec.continuous      = true;
+      rec.interimResults  = true;
+      rec.lang            = 'id-ID';
+      rec.maxAlternatives = 3;
 
       rec.onresult = (e: any) => {
         for (let i = e.resultIndex; i < e.results.length; i++) {
@@ -224,7 +241,6 @@ export function OverlayUI() {
     setSaveMsg('');
     setPlayerEmail('');
 
-    // 5-second play-again cooldown
     let cd = PLAY_AGAIN_COOLDOWN;
     setPlayAgainOff(true);
     setPlayAgainLabel(`MAIN LAGI (${cd})`);
@@ -245,10 +261,8 @@ export function OverlayUI() {
 
   // ── start game handler ───────────────────────────────────────────────────
   async function handleStart() {
-    // Request fullscreen for better immersion
     try { await document.documentElement.requestFullscreen?.(); } catch {}
 
-    // 1. Try WebXR immersive-ar
     if (navigator.xr) {
       try {
         if (await navigator.xr.isSessionSupported('immersive-ar')) {
@@ -259,7 +273,6 @@ export function OverlayUI() {
       } catch {}
     }
 
-    // 2. iOS: request DeviceOrientation permission before starting
     if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
       try {
         const perm = await (DeviceOrientationEvent as any).requestPermission();
@@ -288,7 +301,7 @@ export function OverlayUI() {
     setSaveMsg('Menyimpan skor...');
     setSaveMsgCls('');
     try {
-      await submitScore(name, elapsedTime, email);
+      await submitScore(name, score, email);
       setScoreSaved(true);
       setSaveMsg('Skor berhasil disimpan.');
       setSaveMsgCls('success');
@@ -304,15 +317,15 @@ export function OverlayUI() {
   // ── share score handler ──────────────────────────────────────────────────
   async function handleShare() {
     try {
-      const blob = await buildShareBlob(timeStr);
-      const file = new File([blob], 'green-chili-hunt.png', { type: 'image/png' });
+      const blob = await buildShareBlob(score);
+      const file = new File([blob], 'cari-cabe-ijo.png', { type: 'image/png' });
       if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ title: 'Green Chili Hunt', files: [file] });
+        await navigator.share({ title: 'Cari Cabe Ijo', files: [file] });
       } else if (navigator.share) {
-        await navigator.share({ title: 'Green Chili Hunt', text: `Kumpulin 5 cabe ijo dalam ${timeStr}! Bisa lebih cepet?` });
+        await navigator.share({ title: 'Cari Cabe Ijo', text: `Berhasil tangkap ${score} cabe dalam 30 detik! Bisa lebih banyak?` });
       } else {
         const url  = URL.createObjectURL(blob);
-        const link = Object.assign(document.createElement('a'), { href: url, download: 'green-chili-hunt.png' });
+        const link = Object.assign(document.createElement('a'), { href: url, download: 'cari-cabe-ijo.png' });
         document.body.appendChild(link);
         link.click();
         link.remove();
@@ -338,14 +351,28 @@ export function OverlayUI() {
       <div id="gameHud" className={`game-hud${isPlaying ? '' : ' hidden'}`}>
 
         <div className="top-hud">
+          {/* Countdown */}
           <div className="timer-card">
-            <span className="timer-value">{timeStr}</span>
+            <div className="timer-label">WAKTU</div>
+            <span className={`timer-value${isUrgent ? ' urgent' : ''}`}>{remainSec}</span>
+          </div>
+          {/* Score */}
+          <div className="score-card">
+            <div className="score-label">CABE</div>
+            <span className={`score-value${scoreBumping ? ' bump' : ''}`} key={`sc-${score}`}>
+              {score}
+            </span>
           </div>
         </div>
 
+        {/* Floating +1 */}
+        {showPlusOne && (
+          <div className="plus-one" key={`p1-${score}`}>+1</div>
+        )}
+
         <div
           ref={aimRef}
-          className={`aim-area${missEffect ? ' miss' : ''}`}
+          className={`aim-area${missEffect ? ' miss' : ''}${catchFlash ? ' catch-flash' : ''}`}
           style={{ pointerEvents: 'auto', cursor: 'crosshair' }}
           onClick={triggerCatch}
         >
@@ -358,21 +385,18 @@ export function OverlayUI() {
         </div>
 
         <div className="bottom-hud">
-          <div className="score-strip" aria-label="Cabe terkumpul">
-            <div className="hud-value">{foundCount}/{TARGET_SCORE}</div>
-            <div className="chili-slots" aria-hidden="true">
-              {Array.from({ length: TARGET_SCORE }, (_, i) => (
-                <img
-                  key={i}
-                  src={i < foundCount ? CHILI_ACTIVE : CHILI_INACTIVE}
-                  alt=""
-                  className={`chili-slot${i < foundCount ? ' active' : ''}`}
-                />
-              ))}
+          <div className="bottom-hud-inner">
+            <button
+              className="catch-btn"
+              onPointerDown={triggerCatch}
+              aria-label="Tangkap cabe"
+            >
+              <span className="catch-btn-icon">🌶️</span>
+              TANGKAP!
+            </button>
+            <div className="hint-box">
+              Tangkap cabe sebanyak-banyaknya dalam 30 detik!
             </div>
-          </div>
-          <div className="hint-box">
-            Gerakkan HP-mu untuk mencari, arahkan targetnya, lalu teriakkan: "IJO!"
           </div>
         </div>
       </div>
@@ -387,8 +411,8 @@ export function OverlayUI() {
 
           <div className="how-to-box home-panel">
             <p className="intro-desc">
-              Temukan cabe ijo yang tersembunyi di antara objek di sekitarmu.
-              Gerakkan HP-mu untuk mencari, arahkan targetnya, lalu teriakkan: "IJO!"
+              Tangkap cabe ijo sebanyak-banyaknya dalam <b>30 detik</b>!
+              Gerakkan HP, arahkan aim ke cabe, lalu tekan tombol atau teriakkan: <b>"IJO!"</b>
             </p>
             <img
               src={asset('assets/ui/line_header_panel_petunjuk.png')}
@@ -397,10 +421,11 @@ export function OverlayUI() {
               aria-hidden="true"
             />
             <ul className="home-steps">
-              <li>Izinkan akses AR kamera dan mikrofon</li>
-              <li>Gerakkan kamera untuk temukan Cabe Ijo</li>
-              <li>Arahkan target dan ucapkan "ijo"</li>
-              <li>Kumpulkan 5 Cabe Ijo secepat mungkin!</li>
+              <li>Izinkan akses kamera, AR, dan mikrofon</li>
+              <li>Gerakkan kamera untuk menemukan Cabe Ijo</li>
+              <li>Arahkan lingkaran aim ke cabe</li>
+              <li>Tekan tombol TANGKAP! atau ucapkan "IJO!"</li>
+              <li>Kumpulkan sebanyak mungkin dalam 30 detik!</li>
             </ul>
             <button
               id="startBtn"
@@ -427,7 +452,8 @@ export function OverlayUI() {
 
           <div className="result-panel">
             <div className="result-score-box">
-              <div id="finalScoreText" className="final-score">{timeStr}</div>
+              <div className="result-label">CABE TERTANGKAP</div>
+              <div id="finalScoreText" className="final-score">{score}</div>
             </div>
 
             <div className={`top-five-info${scoreSaved ? '' : ' hidden'}`}>
@@ -443,7 +469,7 @@ export function OverlayUI() {
                     <div key={i} className="leaderboard-item">
                       <span className="leaderboard-rank">{i + 1}</span>
                       <span className="leaderboard-name">{entry?.playerName ?? '–'}</span>
-                      <span className="leaderboard-score">{entry ? formatHudTime(entry.timeMs) : '--:--'}</span>
+                      <span className="leaderboard-score">{entry != null ? `${entry.score}` : '--'}</span>
                     </div>
                   );
                 })}
@@ -499,7 +525,8 @@ export function OverlayUI() {
 
           <div className="save-panel">
             <div className="result-score-box save-score-box">
-              <div id="modalScoreText" className="modal-score-value">{timeStr}</div>
+              <div className="modal-score-label">CABE TERTANGKAP</div>
+              <div id="modalScoreText" className="modal-score-value">{score}</div>
             </div>
 
             <label className="name-label" htmlFor="playerNameInput">Nama</label>
