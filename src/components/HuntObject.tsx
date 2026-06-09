@@ -52,7 +52,7 @@ export function HuntObject({ id, position, type, isTarget }: HuntObjectProps) {
       }}
     >
       <Center>
-        <Resize scale={isTarget ? 0.9 : 0.75}>
+        <Resize scale={isTarget ? 1.8 : 1.5}>
           <primitive object={scene.clone()} />
         </Resize>
       </Center>
