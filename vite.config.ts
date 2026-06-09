@@ -4,8 +4,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [react()],
-  // Serve parent directory as static assets so /assets/ and /css/ are accessible
-  publicDir: path.resolve(__dirname, '../'),
+  publicDir: path.resolve(__dirname, 'public'),
   resolve: {
     alias: {
       '@': path.resolve(__dirname, '.'),
