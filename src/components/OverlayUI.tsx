@@ -4,7 +4,6 @@ import { submitScore, getLeaderboard, LeaderboardEntry } from '../lib/firebase';
 import { xrStore } from '../store/xr';
 import { asset } from '../lib/asset';
 
-const SHOUT_RMS          = 0.18;
 const CATCH_COOLDOWN_MS  = 750;
 const PLAY_AGAIN_COOLDOWN = 5;
 
@@ -90,11 +89,9 @@ export function OverlayUI() {
   const [scoreBumping,   setScoreBumping]   = useState(false);
   const [catchFlash,     setCatchFlash]     = useState(false);
 
-  const aimRef        = useRef<HTMLDivElement>(null);
-  const speechRef     = useRef<any>(null);
-  const lastCatchRef  = useRef(0);
-  const meterResetRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const prevScoreRef  = useRef(score);
+  const aimRef       = useRef<HTMLDivElement>(null);
+  const lastCatchRef = useRef(0);
+  const prevScoreRef = useRef(score);
 
   const remainMs  = Math.max(0, GAME_DURATION_MS - elapsedTime);
   const remainSec = Math.ceil(remainMs / 1000);
@@ -115,26 +112,10 @@ export function OverlayUI() {
     prevScoreRef.current = score;
   }, [score]);
 
-  // ── voice meter helpers ──────────────────────────────────────────────────
-  function setMeter(level: number) {
-    const v = Math.min(Math.max(level, 0), 1);
-    if (aimRef.current) {
-      aimRef.current.style.setProperty('--voice-level', v.toFixed(3));
-      aimRef.current.style.setProperty('--voice-sweep', `${(v * 360).toFixed(1)}deg`);
-    }
-    if (meterResetRef.current) { clearTimeout(meterResetRef.current); meterResetRef.current = null; }
-    if (v >= 1 && useStore.getState().gameState === 'playing') {
-      meterResetRef.current = setTimeout(() => {
-        if (useStore.getState().gameState === 'playing') setMeter(0);
-      }, 180);
-    }
-  }
-
   function triggerCatch() {
     const now = Date.now();
     if (now - lastCatchRef.current < CATCH_COOLDOWN_MS) return;
     lastCatchRef.current = now;
-    setMeter(1);
     window.dispatchEvent(new CustomEvent('try-catch'));
   }
 
@@ -155,83 +136,6 @@ export function OverlayUI() {
     return () => clearInterval(id);
   }, [gameState]);
 
-  // ── voice / audio detection ──────────────────────────────────────────────
-  useEffect(() => {
-    if (gameState !== 'playing') {
-      if (speechRef.current) { try { speechRef.current.stop(); } catch {} speechRef.current = null; }
-      return;
-    }
-
-    let alive = true;
-    let audioCtx: AudioContext | null = null;
-    let rafId: number | null = null;
-
-    (async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
-        });
-        const Ctx = (window as any).AudioContext || (window as any).webkitAudioContext;
-        if (!Ctx || !alive) return;
-        audioCtx = new Ctx();
-        const src      = audioCtx.createMediaStreamSource(stream);
-        const analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 1024;
-        src.connect(analyser);
-        const buf = new Uint8Array(analyser.fftSize);
-
-        const check = () => {
-          if (!alive) return;
-          analyser.getByteTimeDomainData(buf);
-          let sum = 0;
-          for (let i = 0; i < buf.length; i++) { const v = (buf[i] - 128) / 128; sum += v * v; }
-          const rms   = Math.sqrt(sum / buf.length);
-          const floor = 0.025;
-          setMeter(Math.min(Math.max((rms - floor) / (SHOUT_RMS - floor), 0), 1));
-          if (rms >= SHOUT_RMS) triggerCatch();
-          rafId = requestAnimationFrame(check);
-        };
-        check();
-      } catch (e) {
-        console.warn('Audio unavailable:', e);
-      }
-    })();
-
-    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (SR) {
-      const rec = new SR();
-      rec.continuous      = true;
-      rec.interimResults  = true;
-      rec.lang            = 'id-ID';
-      rec.maxAlternatives = 3;
-
-      rec.onresult = (e: any) => {
-        for (let i = e.resultIndex; i < e.results.length; i++) {
-          for (let j = 0; j < Math.min(e.results[i].length, 3); j++) {
-            const t = e.results[i][j].transcript.toLowerCase()
-              .replace(/[^a-z\s]/g, ' ').replace(/\s+/g, ' ').trim();
-            const words = t.split(' ');
-            if (words.some((w: string) => w === 'ijo' || w === 'hijau') ||
-                t.includes('i jo') || t.includes('hi jau') || t.includes('jau')) {
-              triggerCatch();
-              return;
-            }
-          }
-        }
-      };
-      rec.onerror = () => {};
-      rec.onend   = () => { if (alive && useStore.getState().gameState === 'playing') { try { rec.start(); } catch {} } };
-      try { rec.start(); speechRef.current = rec; } catch {}
-    }
-
-    return () => {
-      alive = false;
-      if (rafId !== null) cancelAnimationFrame(rafId);
-      if (audioCtx)       audioCtx.close();
-      if (speechRef.current) { try { speechRef.current.stop(); } catch {} speechRef.current = null; }
-      setMeter(0);
-    };
-  }, [gameState]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── result screen setup ──────────────────────────────────────────────────
   useEffect(() => {
@@ -337,7 +241,6 @@ export function OverlayUI() {
   }
 
   function handleReset() {
-    if (speechRef.current) { try { speechRef.current.stop(); } catch {} speechRef.current = null; }
     resetGame();
   }
 
@@ -377,10 +280,6 @@ export function OverlayUI() {
           onClick={triggerCatch}
         >
           <div className="target-brackets" aria-hidden="true" />
-          <div className="voice-meter" aria-hidden="true">
-            <div className="voice-meter-empty" />
-            <div className="voice-meter-fill" />
-          </div>
           <div className="aim-dot" />
         </div>
 
@@ -391,7 +290,7 @@ export function OverlayUI() {
               onPointerDown={triggerCatch}
               aria-label="Tangkap cabe"
             >
-              <span className="catch-btn-icon">🌶️</span>
+              <img src={asset('assets/ui/chili_hud_active.png')} alt="" className="catch-btn-icon" aria-hidden="true" />
               TANGKAP!
             </button>
             <div className="hint-box">
@@ -412,7 +311,7 @@ export function OverlayUI() {
           <div className="how-to-box home-panel">
             <p className="intro-desc">
               Tangkap cabe ijo sebanyak-banyaknya dalam <b>30 detik</b>!
-              Gerakkan HP, arahkan aim ke cabe, lalu tekan tombol atau teriakkan: <b>"IJO!"</b>
+              Gerakkan HP-mu untuk mencari, arahkan aim ke cabe, lalu tekan tombol <b>TANGKAP!</b>
             </p>
             <img
               src={asset('assets/ui/line_header_panel_petunjuk.png')}
@@ -421,10 +320,10 @@ export function OverlayUI() {
               aria-hidden="true"
             />
             <ul className="home-steps">
-              <li>Izinkan akses kamera, AR, dan mikrofon</li>
+              <li>Izinkan akses kamera dan AR</li>
               <li>Gerakkan kamera untuk menemukan Cabe Ijo</li>
-              <li>Arahkan lingkaran aim ke cabe</li>
-              <li>Tekan tombol TANGKAP! atau ucapkan "IJO!"</li>
+              <li>Arahkan lingkaran aim tepat ke cabe</li>
+              <li>Tekan tombol TANGKAP! untuk menangkap</li>
               <li>Kumpulkan sebanyak mungkin dalam 30 detik!</li>
             </ul>
             <button
