@@ -1055,6 +1055,99 @@
   }
 }
 
+/* RESET CONFIRM POPUP */
+.reset-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.reset-confirm-card {
+  width: 100%;
+  max-width: min(340px, calc(100vw - 48px));
+  padding: 32px 24px 24px;
+  border-radius: 24px;
+  text-align: center;
+  color: #ffffff;
+  background: linear-gradient(180deg, rgba(18, 36, 20, 0.98), rgba(8, 18, 10, 0.97));
+  border: 1px solid rgba(202, 255, 114, 0.24);
+  box-shadow:
+    0 32px 80px rgba(0, 0, 0, 0.6),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  font-family: "Saira", Arial, Helvetica, sans-serif;
+}
+
+.reset-confirm-icon {
+  font-size: 42px;
+  line-height: 1;
+  margin-bottom: 14px;
+  color: #caff72;
+  filter: drop-shadow(0 0 12px rgba(179, 255, 67, 0.6));
+}
+
+.reset-confirm-title {
+  margin: 0 0 8px;
+  font-size: clamp(20px, 6vw, 26px);
+  font-weight: 900;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-shadow: 0 3px 0 rgba(30, 136, 47, 0.6);
+}
+
+.reset-confirm-sub {
+  margin: 0 0 24px;
+  font-size: clamp(12px, 3.4vw, 14px);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.45;
+}
+
+.reset-confirm-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.reset-confirm-yes,
+.reset-confirm-no {
+  height: clamp(48px, 9vw, 58px);
+  border: none;
+  border-radius: 14px;
+  font-size: clamp(13px, 3.6vw, 15px);
+  font-weight: 900;
+  font-family: "Saira", Arial, Helvetica, sans-serif;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.08s, opacity 0.08s;
+}
+
+.reset-confirm-yes {
+  color: #09210d;
+  background: linear-gradient(135deg, #d6ff7a, #3dd95b);
+  box-shadow: 0 10px 24px rgba(92, 255, 77, 0.32);
+}
+
+.reset-confirm-no {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1.5px solid rgba(202, 255, 114, 0.22);
+}
+
+.reset-confirm-yes:active,
+.reset-confirm-no:active {
+  transform: scale(0.95);
+  opacity: 0.85;
+}
+
 /* HUD RESET BUTTON */
 .hud-reset-btn {
   position: fixed;

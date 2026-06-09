@@ -87,11 +87,13 @@ export function OverlayUI() {
   const [missEffect,     setMissEffect]     = useState(false);
   const [showPlusOne,    setShowPlusOne]    = useState(false);
   const [scoreBumping,   setScoreBumping]   = useState(false);
-  const [catchFlash,     setCatchFlash]     = useState(false);
+  const [catchFlash,       setCatchFlash]       = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
-  const aimRef       = useRef<HTMLDivElement>(null);
-  const lastCatchRef = useRef(0);
-  const prevScoreRef = useRef(score);
+  const aimRef        = useRef<HTMLDivElement>(null);
+  const lastCatchRef  = useRef(0);
+  const prevScoreRef  = useRef(score);
+  const pauseStartRef = useRef(0);
 
   const remainMs  = Math.max(0, GAME_DURATION_MS - elapsedTime);
   const remainSec = Math.ceil(remainMs / 1000);
@@ -129,19 +131,19 @@ export function OverlayUI() {
     return () => window.removeEventListener('catch-miss', onMiss);
   }, []);
 
-  // ── timer tick ───────────────────────────────────────────────────────────
+  // ── timer tick (stops while reset confirm is open) ──────────────────────
   useEffect(() => {
-    if (gameState !== 'playing') return;
+    if (gameState !== 'playing' || showResetConfirm) return;
     const id = setInterval(() => useStore.getState().tickTimer(), 100);
     return () => clearInterval(id);
-  }, [gameState]);
+  }, [gameState, showResetConfirm]);
 
 
   // ── result screen setup ──────────────────────────────────────────────────
   useEffect(() => {
     if (gameState !== 'gameover') return;
     setScoreSaved(false);
-    setShowSaveModal(false);
+    setShowSaveModal(true); // buka simpan skor langsung
     setSaveMsg('');
     setPlayerEmail('');
 
@@ -240,6 +242,25 @@ export function OverlayUI() {
     }
   }
 
+  function handleResetClick() {
+    pauseStartRef.current = Date.now();
+    setShowResetConfirm(true);
+  }
+
+  function handleConfirmYes() {
+    setShowResetConfirm(false);
+    resetGame();
+  }
+
+  function handleConfirmNo() {
+    // Compensate startTime by how long the popup was open
+    const pausedDuration = Date.now() - pauseStartRef.current;
+    useStore.setState((s: any) => ({
+      startTime: s.startTime != null ? s.startTime + pausedDuration : null,
+    }));
+    setShowResetConfirm(false);
+  }
+
   function handleReset() {
     resetGame();
   }
@@ -269,7 +290,7 @@ export function OverlayUI() {
         </div>
 
         {/* Reset button — top-right corner */}
-        <button className="hud-reset-btn" onClick={handleReset} aria-label="Ulangi game">
+        <button className="hud-reset-btn" onClick={handleResetClick} aria-label="Ulangi game">
           ↺
         </button>
 
@@ -304,6 +325,25 @@ export function OverlayUI() {
           </div>
         </div>
       </div>
+
+      {/* ── RESET CONFIRM POPUP ──────────────────────────────────────── */}
+      {showResetConfirm && (
+        <div className="reset-confirm-overlay" role="dialog" aria-modal="true">
+          <div className="reset-confirm-card">
+            <div className="reset-confirm-icon">↺</div>
+            <p className="reset-confirm-title">Ulang dari awal?</p>
+            <p className="reset-confirm-sub">Progress game kamu akan hilang dan score dikosongkan.</p>
+            <div className="reset-confirm-btns">
+              <button className="reset-confirm-yes" onClick={handleConfirmYes}>
+                YA, ULANG
+              </button>
+              <button className="reset-confirm-no" onClick={handleConfirmNo}>
+                TIDAK, LANJUT
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── INTRO SCREEN ─────────────────────────────────────────────── */}
       <section id="introScreen" className={`screen${isIntro ? ' active' : ''}`}>
@@ -362,22 +402,6 @@ export function OverlayUI() {
 
             <div className={`top-five-info${scoreSaved ? '' : ' hidden'}`}>
               Skor tersimpan di leaderboard
-            </div>
-
-            <div className="leaderboard-box">
-              <h3>Peringkat 5 Teratas</h3>
-              <div id="leaderboardList" className="leaderboard-list">
-                {Array.from({ length: 5 }, (_, i) => {
-                  const entry = leaderboard[i];
-                  return (
-                    <div key={i} className="leaderboard-item">
-                      <span className="leaderboard-rank">{i + 1}</span>
-                      <span className="leaderboard-name">{entry?.playerName ?? '–'}</span>
-                      <span className="leaderboard-score">{entry != null ? `${entry.score}` : '--'}</span>
-                    </div>
-                  );
-                })}
-              </div>
             </div>
 
             <button id="shareBtn"    className="secondary-btn result-action-btn" onClick={handleShare}>
