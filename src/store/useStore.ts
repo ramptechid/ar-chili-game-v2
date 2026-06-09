@@ -37,7 +37,7 @@ function generatePositions(): ObjectPosition[] {
   const now = Date.now();
 
   const spawn = () => {
-    const r     = 8 + Math.random() * 12;
+    const r     = 5 + Math.random() * 6;
     const theta = Math.random() * Math.PI * 2;
     const phi   = (Math.random() - 0.5) * Math.PI * 0.4;
     return {
@@ -86,7 +86,7 @@ export const useStore = create<StoreState>((set, get) => ({
     const newObjects = objects.map(obj => {
       if (!obj.found && now - obj.spawnTime > obj.duration) {
         changed = true;
-        const r     = 8 + Math.random() * 12;
+        const r     = 5 + Math.random() * 6;
         const theta = Math.random() * Math.PI * 2;
         const phi   = (Math.random() - 0.5) * Math.PI * 0.4;
         return {
