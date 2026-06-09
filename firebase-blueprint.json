@@ -1,0 +1,30 @@
+{
+  "entities": {
+    "LeaderboardEntry": {
+      "title": "Leaderboard Entry",
+      "description": "An entry representing a player's score (time taken) in the AR hunt.",
+      "type": "object",
+      "properties": {
+        "playerName": {
+          "type": "string",
+          "description": "Name of the player"
+        },
+        "timeMs": {
+          "type": "number",
+          "description": "Time taken to complete the hunt in milliseconds"
+        },
+        "createdAt": {
+          "type": "number",
+          "description": "When the score was submitted"
+        }
+      },
+      "required": ["playerName", "timeMs", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/leaderboard/{entryId}": {
+      "schema": "LeaderboardEntry",
+      "description": "Collection of leaderboard entries"
+    }
+  }
+}

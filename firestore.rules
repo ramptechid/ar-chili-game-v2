@@ -1,0 +1,44 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidLeaderboardEntry(data) {
+      return data.keys().hasAll(['playerName', 'timeMs', 'createdAt']) &&
+        data.keys().size() == 3 &&
+        data.playerName is string && data.playerName.size() > 0 && data.playerName.size() <= 64 &&
+        data.timeMs is number && data.timeMs > 0 &&
+        data.createdAt is number;
+    }
+
+    match /leaderboard/{entryId} {
+      // Anyone can list the leaderboard
+      allow list: if true;
+      allow get: if isValidId(entryId);
+
+      // Allow anyone to submit a score (anonymous submission)
+      // Client uses Date.now() for createdAt, which is allowed by isValidLeaderboardEntry.
+      allow create: if isValidId(entryId) &&
+                       isValidLeaderboardEntry(incoming());
+      
+      // Scores cannot be updated or deleted once submitted
+      allow update, delete: if false;
+    }
+  }
+}
