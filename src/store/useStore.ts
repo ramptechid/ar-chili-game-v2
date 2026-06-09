@@ -123,8 +123,7 @@ export const useStore = create<StoreState>((set, get) => ({
       );
       set({ score: state.score + 1, objects: newObjects });
     } else {
-      // Decoy — show miss, mark found (respawns via timer)
-      window.dispatchEvent(new CustomEvent('catch-miss'));
+      // Decoy — silently mark found, respawns via timer (no score change, no miss effect)
       const newObjects = state.objects.map(o => o.id === id ? { ...o, found: true } : o);
       set({ objects: newObjects });
     }

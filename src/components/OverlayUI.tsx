@@ -84,7 +84,6 @@ export function OverlayUI() {
   const [saving,         setSaving]         = useState(false);
   const [playAgainOff,   setPlayAgainOff]   = useState(false);
   const [playAgainLabel, setPlayAgainLabel] = useState('MAIN LAGI');
-  const [missEffect,     setMissEffect]     = useState(false);
   const [showPlusOne,    setShowPlusOne]    = useState(false);
   const [scoreBumping,   setScoreBumping]   = useState(false);
   const [catchFlash,       setCatchFlash]       = useState(false);
@@ -120,16 +119,6 @@ export function OverlayUI() {
     lastCatchRef.current = now;
     window.dispatchEvent(new CustomEvent('try-catch'));
   }
-
-  // ── miss animation ───────────────────────────────────────────────────────
-  useEffect(() => {
-    const onMiss = () => {
-      setMissEffect(true);
-      setTimeout(() => setMissEffect(false), 320);
-    };
-    window.addEventListener('catch-miss', onMiss);
-    return () => window.removeEventListener('catch-miss', onMiss);
-  }, []);
 
   // ── timer tick (stops while reset confirm is open) ──────────────────────
   useEffect(() => {
@@ -301,11 +290,11 @@ export function OverlayUI() {
 
         <div
           ref={aimRef}
-          className={`aim-area${missEffect ? ' miss' : ''}${catchFlash ? ' catch-flash' : ''}`}
+          className={`aim-area${catchFlash ? ' catch-flash' : ''}`}
           style={{ pointerEvents: 'auto', cursor: 'crosshair' }}
           onClick={triggerCatch}
         >
-          <div className="target-brackets" aria-hidden="true" />
+          <img src={asset('assets/ui/voice_meter_empty.png')} alt="" className="aim-ring" aria-hidden="true" />
           <div className="aim-dot" />
         </div>
 
@@ -388,8 +377,8 @@ export function OverlayUI() {
         </div>
       </section>
 
-      {/* ── RESULT SCREEN ────────────────────────────────────────────── */}
-      <section id="resultScreen" className={`screen${isGameover ? ' active' : ''}`}>
+      {/* ── RESULT SCREEN (hidden — save modal handles game over flow) ── */}
+      <section id="resultScreen" className="screen">
         <div className="result-card">
           <img src={asset('assets/ui/logo_brand.png')}          alt="Indomie"       className="result-brand-image" />
           <img src={asset('assets/ui/title_cari_cabe_ijo.png')} alt="Cari Cabe Ijo" className="result-title-image" />
@@ -496,13 +485,24 @@ export function OverlayUI() {
               SIMPAN
             </button>
 
-            <button
-              id="closeSaveModalBtn"
-              className="secondary-btn"
-              onClick={() => setShowSaveModal(false)}
-            >
-              BATAL
-            </button>
+            {isGameover ? (
+              <button
+                id="playAgainBtn"
+                className="secondary-btn"
+                disabled={playAgainOff}
+                onClick={() => { setShowSaveModal(false); handleReset(); }}
+              >
+                {playAgainLabel}
+              </button>
+            ) : (
+              <button
+                id="closeSaveModalBtn"
+                className="secondary-btn"
+                onClick={() => setShowSaveModal(false)}
+              >
+                BATAL
+              </button>
+            )}
           </div>
         </div>
       </div>
