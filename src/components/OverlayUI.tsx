@@ -2,14 +2,15 @@ import { useEffect, useRef, useState } from 'react';
 import { useStore, formatHudTime } from '../store/useStore';
 import { submitScore, getLeaderboard, LeaderboardEntry } from '../lib/firebase';
 import { xrStore } from '../store/xr';
+import { asset } from '../lib/asset';
 
 const TARGET_SCORE       = 5;
 const SHOUT_RMS          = 0.18;
 const CATCH_COOLDOWN_MS  = 850;
 const PLAY_AGAIN_COOLDOWN = 5;
 
-const CHILI_ACTIVE   = '/assets/ui/chili_hud_active.png';
-const CHILI_INACTIVE = '/assets/ui/chili_hud_inactive.png';
+const CHILI_ACTIVE   = asset('assets/ui/chili_hud_active.png');
+const CHILI_INACTIVE = asset('assets/ui/chili_hud_inactive.png');
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -39,10 +40,10 @@ async function buildShareBlob(time: string): Promise<Blob> {
 
   try {
     const [bg, logo, frame, footer] = await Promise.all([
-      loadImg('/assets/ui/bg_share_result.png'),
-      loadImg('/assets/ui/logo_share_result.png'),
-      loadImg('/assets/ui/frame_durasi_share.png'),
-      loadImg('/assets/ui/footer_share.png'),
+      loadImg(asset('assets/ui/bg_share_result.png')),
+      loadImg(asset('assets/ui/logo_share_result.png')),
+      loadImg(asset('assets/ui/frame_durasi_share.png')),
+      loadImg(asset('assets/ui/footer_share.png')),
     ]);
     ctx.fillStyle = '#020803';
     ctx.fillRect(0, 0, 1080, 1920);
@@ -378,11 +379,11 @@ export function OverlayUI() {
 
       {/* ── INTRO SCREEN ─────────────────────────────────────────────── */}
       <section id="introScreen" className={`screen${isIntro ? ' active' : ''}`}>
-        <img src="/assets/ui/bg_home.png" alt="" className="home-bg-image" aria-hidden="true" />
+        <img src={asset('assets/ui/bg_home.png')} alt="" className="home-bg-image" aria-hidden="true" />
         <div className="intro-card home-card">
-          <img src="/assets/ui/logo_brand.png"          alt="Indomie"       className="home-brand-image" />
-          <img src="/assets/ui/title_cari_cabe_ijo.png" alt="Cari Cabe Ijo" className="home-title-image" />
-          <img src="/assets/ui/ribbon_the_game.png"     alt="The Game"      className="home-ribbon-image" />
+          <img src={asset('assets/ui/logo_brand.png')}          alt="Indomie"       className="home-brand-image" />
+          <img src={asset('assets/ui/title_cari_cabe_ijo.png')} alt="Cari Cabe Ijo" className="home-title-image" />
+          <img src={asset('assets/ui/ribbon_the_game.png')}     alt="The Game"      className="home-ribbon-image" />
 
           <div className="how-to-box home-panel">
             <p className="intro-desc">
@@ -390,7 +391,7 @@ export function OverlayUI() {
               Gerakkan HP-mu untuk mencari, arahkan targetnya, lalu teriakkan: "IJO!"
             </p>
             <img
-              src="/assets/ui/line_header_panel_petunjuk.png"
+              src={asset('assets/ui/line_header_panel_petunjuk.png')}
               alt=""
               className="home-panel-line"
               aria-hidden="true"
@@ -408,7 +409,7 @@ export function OverlayUI() {
               onClick={handleStart}
             >
               <img
-                src="/assets/ui/btn_mulai_main.png"
+                src={asset('assets/ui/btn_mulai_main.png')}
                 alt=""
                 className="home-start-image"
                 aria-hidden="true"
@@ -421,8 +422,8 @@ export function OverlayUI() {
       {/* ── RESULT SCREEN ────────────────────────────────────────────── */}
       <section id="resultScreen" className={`screen${isGameover ? ' active' : ''}`}>
         <div className="result-card">
-          <img src="/assets/ui/logo_brand.png"          alt="Indomie"       className="result-brand-image" />
-          <img src="/assets/ui/title_cari_cabe_ijo.png" alt="Cari Cabe Ijo" className="result-title-image" />
+          <img src={asset('assets/ui/logo_brand.png')}          alt="Indomie"       className="result-brand-image" />
+          <img src={asset('assets/ui/title_cari_cabe_ijo.png')} alt="Cari Cabe Ijo" className="result-title-image" />
 
           <div className="result-panel">
             <div className="result-score-box">
@@ -493,8 +494,8 @@ export function OverlayUI() {
       {/* ── SAVE SCORE MODAL ─────────────────────────────────────────── */}
       <div id="saveScoreModal" className={`save-modal${showSaveModal ? '' : ' hidden'}`}>
         <div className="save-modal-card">
-          <img src="/assets/ui/logo_brand.png"          alt="Indomie"       className="save-brand-image" />
-          <img src="/assets/ui/title_cari_cabe_ijo.png" alt="Cari Cabe Ijo" className="save-title-image" />
+          <img src={asset('assets/ui/logo_brand.png')}          alt="Indomie"       className="save-brand-image" />
+          <img src={asset('assets/ui/title_cari_cabe_ijo.png')} alt="Cari Cabe Ijo" className="save-title-image" />
 
           <div className="save-panel">
             <div className="result-score-box save-score-box">
