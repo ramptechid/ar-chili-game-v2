@@ -123,6 +123,21 @@
   mask-image: conic-gradient(#000 0deg var(--voice-sweep), transparent var(--voice-sweep) 360deg);
 }
 
+.aim-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 0 12px rgba(95, 255, 94, 0.55));
+}
+
+.aim-area.catch-flash .aim-ring {
+  filter: brightness(1.9) drop-shadow(0 0 22px rgba(179, 255, 67, 1));
+  transition: filter 0.05s ease-out;
+}
+
 .aim-dot {
   position: absolute;
   left: 50%;
