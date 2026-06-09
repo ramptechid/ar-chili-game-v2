@@ -268,6 +268,11 @@ export function OverlayUI() {
           </div>
         </div>
 
+        {/* Reset button — top-right corner */}
+        <button className="hud-reset-btn" onClick={handleReset} aria-label="Ulangi game">
+          ↺
+        </button>
+
         {/* Floating +1 */}
         {showPlusOne && (
           <div className="plus-one" key={`p1-${score}`}>+1</div>

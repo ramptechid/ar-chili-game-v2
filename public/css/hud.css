@@ -1055,6 +1055,38 @@
   }
 }
 
+/* HUD RESET BUTTON */
+.hud-reset-btn {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 16px) + clamp(14px, 3.8dvh, 38px));
+  right: clamp(14px, 4vw, 24px);
+  z-index: 3;
+  width: clamp(42px, 11vw, 52px);
+  height: clamp(42px, 11vw, 52px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1.5px solid rgba(202, 255, 114, 0.28);
+  color: #caff72;
+  font-size: clamp(20px, 5.5vw, 26px);
+  line-height: 1;
+  pointer-events: auto;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+  transition: background 0.15s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hud-reset-btn:active {
+  transform: rotate(-90deg) scale(0.9);
+  background: rgba(202, 255, 114, 0.22);
+}
+
 /* TIMER LABEL */
 .timer-label {
   font-size: clamp(7px, 1.9vw, 9px);
