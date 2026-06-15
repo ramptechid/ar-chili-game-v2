@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { useStore, GAME_DURATION_MS } from '../store/useStore';
-import { submitScore, getLeaderboard, LeaderboardEntry } from '../lib/firebase';
+import { submitScore, getLeaderboard, LeaderboardEntry } from '../lib/api';
 import { xrStore } from '../store/xr';
 import { asset } from '../lib/asset';
 
 const CATCH_COOLDOWN_MS  = 750;
 const PLAY_AGAIN_COOLDOWN = 5;
 
-function isValidEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+function isValidInstagram(ig: string) {
+  return /^[a-zA-Z0-9._]{1,30}$/.test(ig);
 }
 
 function loadImg(src: string): Promise<HTMLImageElement> {
@@ -77,7 +77,7 @@ export function OverlayUI() {
   const [noticeTitle,    setNoticeTitle]    = useState('');
   const [noticeText,     setNoticeText]     = useState('');
   const [showSaveModal,  setShowSaveModal]  = useState(false);
-  const [playerEmail,    setPlayerEmail]    = useState('');
+  const [playerInstagram, setPlayerInstagram] = useState('');
   const [saveMsg,        setSaveMsg]        = useState('');
   const [saveMsgCls,     setSaveMsgCls]     = useState('');
   const [scoreSaved,     setScoreSaved]     = useState(false);
@@ -134,7 +134,7 @@ export function OverlayUI() {
     setScoreSaved(false);
     setShowSaveModal(true); // buka simpan skor langsung
     setSaveMsg('');
-    setPlayerEmail('');
+    setPlayerInstagram('');
 
     let cd = PLAY_AGAIN_COOLDOWN;
     setPlayAgainOff(true);
@@ -207,21 +207,21 @@ export function OverlayUI() {
   // ── save score handler ───────────────────────────────────────────────────
   async function handleSave() {
     if (scoreSaved || saving) return;
-    const name  = playerName.trim();
-    const email = playerEmail.trim();
+    const name = playerName.trim();
+    const ig   = playerInstagram.trim().replace(/^@/, '');
 
     if (!name) { setSaveMsg('Masukkan nama kamu.'); setSaveMsgCls('error'); return; }
-    if (!isValidEmail(email)) { setSaveMsg('Masukkan e-mail yang valid.'); setSaveMsgCls('error'); return; }
+    if (!isValidInstagram(ig)) { setSaveMsg('Masukkan username Instagram yang valid (tanpa @, maks 30 karakter).'); setSaveMsgCls('error'); return; }
 
     setSaving(true);
     setSaveMsg('Menyimpan skor...');
     setSaveMsgCls('');
     try {
-      await submitScore(name, score, email);
+      await submitScore(name, score, ig);
       setScoreSaved(true);
-      setSaveMsg('Skor berhasil disimpan.');
+      setSaveMsg('Skor berhasil disimpan!');
       setSaveMsgCls('success');
-      setTimeout(() => setShowSaveModal(false), 700);
+      setTimeout(() => setShowSaveModal(false), 900);
       getLeaderboard().then(setLeaderboard).catch(() => {});
     } catch {
       setSaveMsg('Gagal menyimpan skor. Coba lagi.');
@@ -470,19 +470,26 @@ export function OverlayUI() {
               onChange={e => setPlayerName(e.target.value)}
             />
 
-            <label className="name-label email-label" htmlFor="playerEmailInput">E-mail</label>
-            <input
-              id="playerEmailInput"
-              className="name-input"
-              type="email"
-              maxLength={150}
-              placeholder=""
-              value={playerEmail}
-              onChange={e => setPlayerEmail(e.target.value)}
-            />
+            <label className="name-label email-label" htmlFor="playerInstagramInput">
+              Username Instagram
+            </label>
+            <div className="instagram-input-wrap">
+              <span className="instagram-at">@</span>
+              <input
+                id="playerInstagramInput"
+                className="name-input instagram-input"
+                type="text"
+                maxLength={30}
+                placeholder="username_kamu"
+                autoCapitalize="none"
+                autoCorrect="off"
+                value={playerInstagram}
+                onChange={e => setPlayerInstagram(e.target.value.replace(/^@/, ''))}
+              />
+            </div>
 
             <p className="email-note">
-              Mohon masukkan e-mail yang benar. E-mail digunakan untuk penukaran hadiah.
+              Masukkan username Instagram kamu (tanpa @). Digunakan untuk penukaran hadiah.
             </p>
 
             <div id="saveMessage" className={`save-message${saveMsgCls ? ` ${saveMsgCls}` : ''}`}>

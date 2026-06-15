@@ -986,7 +986,31 @@
 }
 
 .email-label {
-  margin-top: 8px;
+  margin-top: 10px;
+}
+
+.instagram-input-wrap {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.instagram-at {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 13px;
+  font-weight: 700;
+  font-family: "Saira", Arial, Helvetica, sans-serif;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.instagram-input {
+  padding-left: 28px !important;
 }
 
 .name-input {
