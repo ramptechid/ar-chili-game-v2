@@ -124,17 +124,30 @@
   mask-image: conic-gradient(#000 0deg var(--voice-sweep), transparent var(--voice-sweep) 360deg);
 }
 
-.aim-ring {
+.aim-brackets {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: contain;
   display: block;
-  filter: drop-shadow(0 0 12px rgba(95, 255, 94, 0.55));
+  filter: drop-shadow(0 0 11px rgba(95, 255, 94, 0.5));
 }
 
-.aim-area.catch-flash .aim-ring {
+.aim-track {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 60%;
+  height: 60%;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 0 12px rgba(179, 255, 67, 0.4));
+}
+
+.aim-area.catch-flash .aim-brackets,
+.aim-area.catch-flash .aim-track {
   filter: brightness(1.9) drop-shadow(0 0 22px rgba(179, 255, 67, 1));
   transition: filter 0.05s ease-out;
 }

@@ -114,14 +114,19 @@ export const useStore = create<StoreState>((set, get) => ({
     if (!hit || hit.found) return;
 
     if (hit.isTarget) {
-      // Caught a chili — score +1, immediately respawn at new position
-      const now = Date.now();
-      const newObjects = state.objects.map(o =>
-        o.id === id
-          ? { ...o, ...spawnPos(), found: false, spawnTime: now, duration: 4000 + Math.random() * 6000 }
-          : o
-      );
+      // Disappear immediately, respawn at new position after 1.5 s
+      const newObjects = state.objects.map(o => o.id === id ? { ...o, found: true } : o);
       set({ score: state.score + 1, objects: newObjects });
+      setTimeout(() => {
+        if (get().gameState !== 'playing') return;
+        set({
+          objects: get().objects.map(o =>
+            o.id === id
+              ? { ...o, ...spawnPos(), found: false, spawnTime: Date.now(), duration: 4000 + Math.random() * 6000 }
+              : o
+          ),
+        });
+      }, 1500);
     } else {
       // Decoy — silently mark found, respawns via timer (no score change, no miss effect)
       const newObjects = state.objects.map(o => o.id === id ? { ...o, found: true } : o);
