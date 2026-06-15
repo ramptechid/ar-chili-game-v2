@@ -87,7 +87,8 @@ export function OverlayUI() {
   const [showPlusOne,    setShowPlusOne]    = useState(false);
   const [scoreBumping,   setScoreBumping]   = useState(false);
   const [catchFlash,   setCatchFlash]   = useState(false);
-  const [showPauseMenu, setShowPauseMenu] = useState(false);
+  const [showPauseMenu,    setShowPauseMenu]    = useState(false);
+  const [showLeaderboard,  setShowLeaderboard]  = useState(false);
 
   const aimRef        = useRef<HTMLDivElement>(null);
   const lastCatchRef  = useRef(0);
@@ -132,7 +133,8 @@ export function OverlayUI() {
   useEffect(() => {
     if (gameState !== 'gameover') return;
     setScoreSaved(false);
-    setShowSaveModal(true); // buka simpan skor langsung
+    setShowSaveModal(true);
+    setShowLeaderboard(false);
     setSaveMsg('');
     setPlayerInstagram('');
 
@@ -221,8 +223,10 @@ export function OverlayUI() {
       setScoreSaved(true);
       setSaveMsg('Skor berhasil disimpan!');
       setSaveMsgCls('success');
-      setTimeout(() => setShowSaveModal(false), 900);
-      getLeaderboard().then(setLeaderboard).catch(() => {});
+      getLeaderboard()
+        .then(lb => { setLeaderboard(lb); })
+        .catch(() => {})
+        .finally(() => setTimeout(() => setShowLeaderboard(true), 600));
     } catch {
       setSaveMsg('Gagal menyimpan skor. Coba lagi.');
       setSaveMsgCls('error');
@@ -453,77 +457,115 @@ export function OverlayUI() {
           <img src={asset('assets/ui/logo_brand.png')}          alt="Indomie"       className="save-brand-image" />
           <img src={asset('assets/ui/title_cari_cabe_ijo.png')} alt="Cari Cabe Ijo" className="save-title-image" />
 
-          <div className="save-panel">
-            <div className="result-score-box save-score-box">
-              <div className="modal-score-label">CABE TERTANGKAP</div>
-              <div id="modalScoreText" className="modal-score-value">{score}</div>
-            </div>
+          {showLeaderboard ? (
+            /* ── LEADERBOARD VIEW ── */
+            <div className="modal-lb-wrap">
+              <div className="modal-lb-myscore">
+                <span className="modal-lb-myscore-label">SKORMU</span>
+                <span className="modal-lb-myscore-val">{score}</span>
+                <span className="modal-lb-myscore-unit">CABE</span>
+              </div>
 
-            <label className="name-label" htmlFor="playerNameInput">Nama</label>
-            <input
-              id="playerNameInput"
-              className="name-input"
-              type="text"
-              maxLength={100}
-              placeholder=""
-              value={playerName}
-              onChange={e => setPlayerName(e.target.value)}
-            />
+              <div className="modal-lb-title">🏆 LEADERBOARD</div>
 
-            <label className="name-label email-label" htmlFor="playerInstagramInput">
-              Username Instagram
-            </label>
-            <div className="instagram-input-wrap">
-              <span className="instagram-at">@</span>
-              <input
-                id="playerInstagramInput"
-                className="name-input instagram-input"
-                type="text"
-                maxLength={30}
-                placeholder="username_kamu"
-                autoCapitalize="none"
-                autoCorrect="off"
-                value={playerInstagram}
-                onChange={e => setPlayerInstagram(e.target.value.replace(/^@/, ''))}
-              />
-            </div>
+              <div className="modal-lb-list">
+                {leaderboard.length === 0 ? (
+                  <div className="modal-lb-empty">Belum ada data</div>
+                ) : leaderboard.slice(0, 10).map((entry, i) => {
+                  const isMe = entry.playerName === playerName.trim();
+                  const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : null;
+                  return (
+                    <div key={entry.id ?? i} className={`modal-lb-row${isMe ? ' modal-lb-me' : ''}`}>
+                      <span className="modal-lb-rank">{medal ?? (i + 1)}</span>
+                      <span className="modal-lb-name">{entry.playerName}</span>
+                      <span className="modal-lb-score">{entry.score}</span>
+                    </div>
+                  );
+                })}
+              </div>
 
-            <p className="email-note">
-              Masukkan username Instagram kamu (tanpa @). Digunakan untuk penukaran hadiah.
-            </p>
-
-            <div id="saveMessage" className={`save-message${saveMsgCls ? ` ${saveMsgCls}` : ''}`}>
-              {saveMsg}
-            </div>
-
-            <button
-              id="submitScoreBtn"
-              className="primary-btn"
-              disabled={saving || scoreSaved}
-              onClick={handleSave}
-            >
-              SIMPAN
-            </button>
-
-            {isGameover ? (
               <button
-                id="playAgainBtn"
-                className="secondary-btn"
+                className="primary-btn modal-lb-playbtn"
                 disabled={playAgainOff}
-                onClick={() => { setShowSaveModal(false); handleReset(); }}
+                onClick={() => { setShowSaveModal(false); setShowLeaderboard(false); handleReset(); }}
               >
                 {playAgainLabel}
               </button>
-            ) : (
+            </div>
+          ) : (
+            /* ── FORM VIEW ── */
+            <div className="save-panel">
+              <div className="result-score-box save-score-box">
+                <div className="modal-score-label">CABE TERTANGKAP</div>
+                <div id="modalScoreText" className="modal-score-value">{score}</div>
+              </div>
+
+              <label className="name-label" htmlFor="playerNameInput">Nama</label>
+              <input
+                id="playerNameInput"
+                className="name-input"
+                type="text"
+                maxLength={100}
+                placeholder=""
+                value={playerName}
+                onChange={e => setPlayerName(e.target.value)}
+              />
+
+              <label className="name-label email-label" htmlFor="playerInstagramInput">
+                Username Instagram
+              </label>
+              <div className="instagram-input-wrap">
+                <span className="instagram-at">@</span>
+                <input
+                  id="playerInstagramInput"
+                  className="name-input instagram-input"
+                  type="text"
+                  maxLength={30}
+                  placeholder="username_kamu"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  value={playerInstagram}
+                  onChange={e => setPlayerInstagram(e.target.value.replace(/^@/, ''))}
+                />
+              </div>
+
+              <p className="email-note">
+                Masukkan username Instagram kamu (tanpa @). Digunakan untuk penukaran hadiah.
+              </p>
+
+              <div id="saveMessage" className={`save-message${saveMsgCls ? ` ${saveMsgCls}` : ''}`}>
+                {saveMsg}
+              </div>
+
               <button
-                id="closeSaveModalBtn"
-                className="secondary-btn"
-                onClick={() => setShowSaveModal(false)}
+                id="submitScoreBtn"
+                className="primary-btn"
+                disabled={saving || scoreSaved}
+                onClick={handleSave}
               >
-                BATAL
+                SIMPAN
               </button>
-            )}
-          </div>
+
+              {isGameover ? (
+                <button
+                  id="playAgainBtn"
+                  className="secondary-btn"
+                  disabled={playAgainOff}
+                  onClick={() => { setShowSaveModal(false); handleReset(); }}
+                >
+                  {playAgainLabel}
+                </button>
+              ) : (
+                <button
+                  id="closeSaveModalBtn"
+                  className="secondary-btn"
+                  onClick={() => setShowSaveModal(false)}
+                >
+                  BATAL
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </>
