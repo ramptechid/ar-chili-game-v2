@@ -1163,23 +1163,19 @@
   opacity: 0.85;
 }
 
-/* HUD RESET BUTTON */
-.hud-reset-btn {
-  position: fixed;
-  top: calc(env(safe-area-inset-top, 16px) + clamp(14px, 3.8dvh, 38px));
-  right: clamp(14px, 4vw, 24px);
-  z-index: 3;
-  width: clamp(42px, 11vw, 52px);
-  height: clamp(42px, 11vw, 52px);
+/* HUD PAUSE BUTTON */
+.hud-pause-btn {
+  align-self: center;
+  width: clamp(38px, 10vw, 48px);
+  height: clamp(38px, 10vw, 48px);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: none;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.12);
   border: 1.5px solid rgba(202, 255, 114, 0.28);
   color: #caff72;
-  font-size: clamp(20px, 5.5vw, 26px);
+  font-size: clamp(16px, 4.5vw, 22px);
   line-height: 1;
   pointer-events: auto;
   cursor: pointer;
@@ -1188,10 +1184,11 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
   transition: background 0.15s, transform 0.1s;
   -webkit-tap-highlight-color: transparent;
+  margin-top: clamp(18px, 5dvh, 52px);
 }
 
-.hud-reset-btn:active {
-  transform: rotate(-90deg) scale(0.9);
+.hud-pause-btn:active {
+  transform: scale(0.88);
   background: rgba(202, 255, 114, 0.22);
 }
 
