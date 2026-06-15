@@ -303,11 +303,15 @@ export function OverlayUI() {
         <div
           ref={aimRef}
           className={`aim-area${catchFlash ? ' catch-flash' : ''}`}
-          style={{ pointerEvents: 'auto', cursor: 'crosshair' }}
-          onClick={triggerCatch}
         >
           <img src={asset('assets/ui/target_brackets.png')} alt="" className="aim-brackets" aria-hidden="true" />
-          <img src={asset('assets/ui/voice_meter_track.png')} alt="" className="aim-track" aria-hidden="true" />
+          <img
+            src={asset('assets/ui/voice_meter_track.png')}
+            alt=""
+            className="aim-track"
+            aria-hidden="true"
+            onPointerDown={triggerCatch}
+          />
           <div className="aim-dot" />
         </div>
 

@@ -131,6 +131,7 @@
   height: 100%;
   object-fit: contain;
   display: block;
+  pointer-events: none;
   filter: drop-shadow(0 0 11px rgba(95, 255, 94, 0.5));
 }
 
@@ -143,7 +144,10 @@
   transform: translate(-50%, -50%);
   object-fit: contain;
   display: block;
+  pointer-events: auto;
+  cursor: crosshair;
   filter: drop-shadow(0 0 12px rgba(179, 255, 67, 0.4));
+  -webkit-tap-highlight-color: transparent;
 }
 
 .aim-area.catch-flash .aim-brackets,
