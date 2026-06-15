@@ -156,7 +156,28 @@ export function OverlayUI() {
 
   // ── start game handler ───────────────────────────────────────────────────
   async function handleStart() {
-    try { await document.documentElement.requestFullscreen?.(); } catch {}
+    // Android: standard Fullscreen API
+    const el = document.documentElement as any;
+    try {
+      if (el.requestFullscreen) {
+        await el.requestFullscreen({ navigationUI: 'hide' });
+      } else if (el.webkitRequestFullscreen) {
+        el.webkitRequestFullscreen();
+      }
+    } catch {}
+
+    // Lock portrait orientation (Android Chrome + some iOS contexts)
+    try {
+      await (screen.orientation as any)?.lock?.('portrait-primary');
+    } catch {}
+
+    // iOS Safari: force hide address bar via scroll (within user-gesture context)
+    try {
+      document.body.style.height = `${window.screen.height}px`;
+      window.scrollTo({ top: 1, behavior: 'instant' as ScrollBehavior });
+      setTimeout(() => { window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior }); }, 80);
+      setTimeout(() => { document.body.style.height = ''; }, 500);
+    } catch {}
 
     if (navigator.xr) {
       try {
