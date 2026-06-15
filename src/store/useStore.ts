@@ -32,8 +32,8 @@ interface StoreState {
 
 export const GAME_DURATION_MS = 30_000;
 
-const TOTAL_TARGETS = 5;
-const TOTAL_DECOYS  = 15;
+const TOTAL_TARGETS = 8;
+const TOTAL_DECOYS  = 0;
 
 function spawnPos() {
   const r     = 5 + Math.random() * 6;

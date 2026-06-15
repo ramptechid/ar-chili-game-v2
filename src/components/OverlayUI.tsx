@@ -86,8 +86,8 @@ export function OverlayUI() {
   const [playAgainLabel, setPlayAgainLabel] = useState('MAIN LAGI');
   const [showPlusOne,    setShowPlusOne]    = useState(false);
   const [scoreBumping,   setScoreBumping]   = useState(false);
-  const [catchFlash,       setCatchFlash]       = useState(false);
-  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [catchFlash,   setCatchFlash]   = useState(false);
+  const [showPauseMenu, setShowPauseMenu] = useState(false);
 
   const aimRef        = useRef<HTMLDivElement>(null);
   const lastCatchRef  = useRef(0);
@@ -120,12 +120,12 @@ export function OverlayUI() {
     window.dispatchEvent(new CustomEvent('try-catch'));
   }
 
-  // ── timer tick (stops while reset confirm is open) ──────────────────────
+  // ── timer tick (stops while pause menu is open) ─────────────────────────
   useEffect(() => {
-    if (gameState !== 'playing' || showResetConfirm) return;
+    if (gameState !== 'playing' || showPauseMenu) return;
     const id = setInterval(() => useStore.getState().tickTimer(), 100);
     return () => clearInterval(id);
-  }, [gameState, showResetConfirm]);
+  }, [gameState, showPauseMenu]);
 
 
   // ── result screen setup ──────────────────────────────────────────────────
@@ -231,23 +231,22 @@ export function OverlayUI() {
     }
   }
 
-  function handleResetClick() {
+  function handlePauseClick() {
     pauseStartRef.current = Date.now();
-    setShowResetConfirm(true);
+    setShowPauseMenu(true);
   }
 
-  function handleConfirmYes() {
-    setShowResetConfirm(false);
-    resetGame();
-  }
-
-  function handleConfirmNo() {
-    // Compensate startTime by how long the popup was open
+  function handlePauseResume() {
     const pausedDuration = Date.now() - pauseStartRef.current;
     useStore.setState((s: any) => ({
       startTime: s.startTime != null ? s.startTime + pausedDuration : null,
     }));
-    setShowResetConfirm(false);
+    setShowPauseMenu(false);
+  }
+
+  function handlePauseRestart() {
+    setShowPauseMenu(false);
+    resetGame();
   }
 
   function handleReset() {
@@ -269,19 +268,11 @@ export function OverlayUI() {
             <div className="timer-label">WAKTU</div>
             <span className={`timer-value${isUrgent ? ' urgent' : ''}`}>{remainSec}</span>
           </div>
-          {/* Score */}
-          <div className="score-card">
-            <div className="score-label">CABE</div>
-            <span className={`score-value${scoreBumping ? ' bump' : ''}`} key={`sc-${score}`}>
-              {score}
-            </span>
-          </div>
+          {/* Pause button */}
+          <button className="hud-pause-btn" onClick={handlePauseClick} aria-label="Jeda game">
+            ⏸
+          </button>
         </div>
-
-        {/* Reset button — top-right corner */}
-        <button className="hud-reset-btn" onClick={handleResetClick} aria-label="Ulangi game">
-          ↺
-        </button>
 
         {/* Floating +1 */}
         {showPlusOne && (
@@ -298,36 +289,32 @@ export function OverlayUI() {
           <div className="aim-dot" />
         </div>
 
-        <div className="bottom-hud">
-          <div className="bottom-hud-inner">
-            <button
-              className="catch-btn"
-              onPointerDown={triggerCatch}
-              aria-label="Tangkap cabe"
-            >
-              <img src={asset('assets/ui/chili_hud_active.png')} alt="" className="catch-btn-icon" aria-hidden="true" />
-              TANGKAP!
-            </button>
-            <div className="hint-box">
-              Tangkap cabe sebanyak-banyaknya dalam 30 detik!
-            </div>
-          </div>
+        {/* Floating +1 */}
+        {showPlusOne && (
+          <div className="plus-one" key={`p1-${score}`}>+1</div>
+        )}
+
+        {/* Score badge below aim ring */}
+        <div className="score-below-aim">
+          <span className={`score-below-value${scoreBumping ? ' bump' : ''}`} key={`sc-${score}`}>
+            {score}
+          </span>
         </div>
       </div>
 
-      {/* ── RESET CONFIRM POPUP ──────────────────────────────────────── */}
-      {showResetConfirm && (
+      {/* ── PAUSE MENU ───────────────────────────────────────────────── */}
+      {showPauseMenu && (
         <div className="reset-confirm-overlay" role="dialog" aria-modal="true">
           <div className="reset-confirm-card">
-            <div className="reset-confirm-icon">↺</div>
-            <p className="reset-confirm-title">Ulang dari awal?</p>
-            <p className="reset-confirm-sub">Progress game kamu akan hilang dan score dikosongkan.</p>
+            <div className="reset-confirm-icon">⏸</div>
+            <p className="reset-confirm-title">GAME DIJEDA</p>
+            <p className="reset-confirm-sub">Mau lanjut atau mulai dari awal?</p>
             <div className="reset-confirm-btns">
-              <button className="reset-confirm-yes" onClick={handleConfirmYes}>
-                YA, ULANG
+              <button className="reset-confirm-yes" onClick={handlePauseResume}>
+                LANJUT MAIN
               </button>
-              <button className="reset-confirm-no" onClick={handleConfirmNo}>
-                TIDAK, LANJUT
+              <button className="reset-confirm-no" onClick={handlePauseRestart}>
+                RESTART
               </button>
             </div>
           </div>
