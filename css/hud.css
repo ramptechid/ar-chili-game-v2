@@ -1322,6 +1322,10 @@
   pointer-events: none;
 }
 
+.score-frame-item--pack .score-frame-single {
+  height: clamp(40px, 13vw, 76px);
+}
+
 .score-frame-anchor {
   position: absolute;
   display: flex;
