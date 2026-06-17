@@ -49,12 +49,10 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  background: url("../assets/ui/timer_frame.png") center / 100% 100% no-repeat;
+  background: url("../assets/ui/timer_frame.svg") center / 100% 100% no-repeat;
   border: none;
   clip-path: none;
-  box-shadow:
-    0 13px 26px rgba(0, 0, 0, 0.34),
-    0 0 18px rgba(103, 255, 71, 0.16);
+  box-shadow: none;
 }
 
 .hud-value,
@@ -1320,19 +1318,17 @@
   top: calc(50% + clamp(128px, 37vmin, 172px));
   transform: translateX(-50%);
   z-index: 3;
-  width: clamp(58px, 15vmin, 78px);
-  height: clamp(58px, 15vmin, 78px);
-  border-radius: 50%;
+  width: clamp(88px, 24vmin, 118px);
+  aspect-ratio: 298.23 / 222.32;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(4, 21, 6, 0.82);
-  border: 2px solid rgba(103, 255, 71, 0.45);
-  box-shadow:
-    0 0 18px rgba(92, 255, 77, 0.22),
-    0 6px 18px rgba(0, 0, 0, 0.36);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: url("../assets/ui/frame_score_1.svg") center / 100% 100% no-repeat;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .score-below-value {
@@ -1371,10 +1367,8 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  background: url("../assets/ui/timer_frame.png") center / 100% 100% no-repeat;
-  box-shadow:
-    0 13px 26px rgba(0, 0, 0, 0.34),
-    0 0 18px rgba(103, 255, 71, 0.16);
+  background: url("../assets/ui/timer_frame.svg") center / 100% 100% no-repeat;
+  box-shadow: none;
 }
 
 .score-label {
