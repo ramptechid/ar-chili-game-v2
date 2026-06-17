@@ -930,7 +930,7 @@
 }
 
 .save-panel > label[for="playerNameInput"] {
-  margin-top: clamp(-8px, -1.1dvh, -4px);
+  margin-top: clamp(-16px, -2.2dvh, -10px);
 }
 
 .save-panel > label[for="playerInstagramInput"] {
