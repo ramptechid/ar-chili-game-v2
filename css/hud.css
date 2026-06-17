@@ -1335,10 +1335,10 @@
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  width: clamp(260px, 78vw, 370px);
+  width: clamp(320px, 92vw, 460px);
   height: auto;
   display: block;
-  margin-top: 8px;
+  margin-top: 18px;
   pointer-events: none;
   filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35));
 }
