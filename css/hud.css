@@ -1315,9 +1315,9 @@
   flex-shrink: 0;
 }
 
-.score-frame-item--cabe  { width: clamp(58px,  19vw, 112px); }
-.score-frame-item--pack  { width: clamp(106px, 35vw, 208px); }
-.score-frame-item--jumbo { width: clamp(90px,  30vw, 178px); }
+.score-frame-item--cabe  { width: clamp(84px, 28vw, 130px); }
+.score-frame-item--pack  { width: clamp(84px, 28vw, 130px); }
+.score-frame-item--jumbo { width: clamp(84px, 28vw, 130px); }
 
 .score-frame-single {
   width: 100%;
