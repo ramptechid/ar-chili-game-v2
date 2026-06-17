@@ -37,9 +37,9 @@ const TOTAL_DECOYS = 10;
 
 // type 0 = Cabe (1pt), type 10 = pack_cabeijo (2pt), type 11 = pack_cabeijo_jumbo (3pt)
 const TARGET_DEFS = [
-  { type: 0,  points: 1, count: 6 },
+  { type: 0,  points: 1, count: 5 },
   { type: 10, points: 2, count: 3 },
-  { type: 11, points: 3, count: 1 },
+  { type: 11, points: 3, count: 2 },
 ];
 
 function spawnPos() {
