@@ -874,19 +874,22 @@
   inset: 0;
   z-index: 60;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: 0;
-  background: url("../assets/ui/BG Hover.png") center / 100% 100% no-repeat;
+  background: #041006 url("../assets/ui/bg_home_new.png") center top / cover no-repeat;
   font-family: "Saira", Arial, Helvetica, sans-serif;
+  overflow: hidden;
 }
 
 .save-modal-card {
-  width: min(78vw, 292px);
-  max-width: 292px;
-  max-height: calc(100dvh - 10px);
+  position: relative;
+  width: 100vw;
+  max-width: 390px;
+  min-height: 100dvh;
+  max-height: none;
   overflow: visible;
-  padding: clamp(30px, 6dvh, 52px) 0 0;
+  padding: calc(env(safe-area-inset-top, 0px) + clamp(36px, 6dvh, 54px)) 0 calc(env(safe-area-inset-bottom, 0px) + 14px);
   border: none;
   border-radius: 0;
   color: #ffffff;
@@ -898,39 +901,61 @@
   align-items: center;
 }
 
-.save-modal-card h2 {
+.save-result-logo {
+  width: clamp(148px, min(60vw, 25dvh), 212px);
+  height: auto;
+  display: block;
+  margin: 0 auto clamp(-26px, -3.8dvh, -12px);
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.46));
+}
+
+.save-modal-card h2,
+.save-panel-title {
   margin: 0 0 clamp(10px, 1.6dvh, 14px);
   color: #ffffff;
-  font-size: clamp(17px, 5.2vw, 23px);
+  font-size: clamp(14px, min(4.5vw, 2.4dvh), 20px);
   line-height: 1;
   font-weight: 900;
   text-transform: uppercase;
 }
 
 .save-panel {
-  aspect-ratio: 640 / 1022;
-  padding: clamp(118px, 19dvh, 148px) clamp(38px, 10vw, 50px) clamp(22px, 4dvh, 34px);
-  background-image: url("../assets/ui/panel_simpan_score.png");
+  width: clamp(260px, min(84vw, 46dvh), 318px);
+  aspect-ratio: 762 / 1240;
+  padding: clamp(90px, min(15dvh, 24vw), 124px) clamp(34px, min(9vw, 4.8dvh), 44px) clamp(18px, 3dvh, 28px);
+  background: url("../assets/ui/panel_resul_new.png") center / 100% 100% no-repeat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.save-score-box {
-  width: min(82%, 162px);
-  margin-bottom: clamp(14px, 2.4dvh, 20px);
+.save-total-box {
+  width: clamp(88px, min(32vw, 15dvh), 118px);
+  aspect-ratio: 293 / 216;
+  margin-bottom: clamp(8px, 1.4dvh, 13px);
+  padding-top: clamp(18px, 3.2dvh, 26px);
+  background: url("../assets/ui/pane_total.png") center / 100% 100% no-repeat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .modal-score-label {
   margin: 0;
   color: #ffffff;
-  font-size: clamp(7px, 2.1vw, 9px);
+  font-size: clamp(6px, min(1.9vw, 1.1dvh), 8px);
   line-height: 1;
   font-weight: 900;
   text-transform: uppercase;
 }
 
 .modal-score-value {
-  margin: 4px 0 0;
+  margin: 3px 0 0;
   color: #79ff70;
-  font-size: clamp(28px, 8.4vw, 39px);
+  font-size: clamp(24px, min(8vw, 4.8dvh), 36px);
   line-height: 1;
   font-weight: 900;
   letter-spacing: 0;
@@ -940,16 +965,16 @@
 .name-label {
   display: block;
   width: 100%;
-  margin: 0 0 4px;
+  margin: 0 0 3px;
   color: #ffffff;
-  font-size: clamp(9px, 2.6vw, 11px);
+  font-size: clamp(7px, min(2.1vw, 1.25dvh), 10px);
   font-weight: 600;
   line-height: 1;
   text-align: center;
 }
 
 .email-label {
-  margin-top: 10px;
+  margin-top: clamp(6px, 1.2dvh, 9px);
 }
 
 .instagram-input-wrap {
@@ -961,7 +986,7 @@
 
 .instagram-at {
   position: absolute;
-  left: 15px;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
   color: rgba(255, 255, 255, 0.65);
@@ -984,10 +1009,10 @@
   border-radius: 0;
   outline: none;
   color: white;
-  font-size: 14px;
+  font-size: clamp(10px, min(3.4vw, 2dvh), 14px);
   font-weight: 700;
   text-align: center;
-  background: url("../assets/ui/inputField_simpanSocore.png") center / 100% 100% no-repeat;
+  background: url("../assets/ui/input_field_new.png") center / 100% 100% no-repeat;
   border: none;
   box-shadow: none;
 }
@@ -1001,17 +1026,18 @@
 }
 
 .email-note {
-  max-width: 210px;
-  margin: 7px auto 0;
+  max-width: 190px;
+  margin: clamp(6px, 1dvh, 8px) auto 0;
   color: #ffffff;
-  font-size: clamp(5px, 1.7vw, 7px);
-  line-height: 1.2;
+  font-size: clamp(6px, min(1.9vw, 1.1dvh), 8px);
+  line-height: 1.12;
   text-align: center;
+  font-style: italic;
 }
 
 .save-message {
-  min-height: 16px;
-  margin: 7px 0 0;
+  min-height: 13px;
+  margin: 5px 0 0;
   font-size: clamp(8px, 2.2vw, 10px);
   font-weight: 800;
   line-height: 1.2;
@@ -1025,33 +1051,30 @@
   color: #ff6969;
 }
 
-.save-panel .primary-btn,
-.save-panel .secondary-btn {
-  width: 100%;
+.save-image-btn {
+  width: clamp(150px, min(56vw, 24dvh), 194px);
   aspect-ratio: 421 / 87;
   min-height: 0;
-  margin-top: 7px;
-  padding: 0 16px;
+  margin-top: clamp(5px, 1dvh, 8px);
+  padding: 0;
   border-radius: 0;
-  font-family: "Saira", Arial, Helvetica, sans-serif;
-  font-size: clamp(13px, 4vw, 19px);
-  line-height: 1;
-  font-style: italic;
-  font-weight: 900;
-  text-transform: uppercase;
-  background: url("../assets/ui/button_bagikan_simpan.png") center / 100% 100% no-repeat;
+  background: transparent;
   border: none;
   box-shadow: none;
-  clip-path: none;
+  cursor: pointer;
 }
 
-.save-panel .primary-btn {
-  color: #ffffff;
+.save-image-btn img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.36));
 }
 
-.save-panel .secondary-btn {
-  color: #ffffff;
-  font-size: clamp(11px, 3.4vw, 15px);
+.save-image-btn:disabled {
+  opacity: 0.68;
+  cursor: not-allowed;
 }
 
 /* MODAL LEADERBOARD */

@@ -85,16 +85,13 @@ body.intro-mode #cameraView {
   opacity: 0;
 }
 
-body.result-mode #cameraView {
-  opacity: 1;
-}
-
 body.intro-mode .camera-overlay {
   opacity: 0;
 }
 
+body.result-mode #cameraView,
 body.result-mode .camera-overlay {
-  opacity: 1;
+  opacity: 0;
 }
 
 /* In WebXR mode the browser provides the camera — hide our fallback elements */
