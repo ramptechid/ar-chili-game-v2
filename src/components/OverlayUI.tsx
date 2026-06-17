@@ -359,15 +359,17 @@ export function OverlayUI() {
         <img src={asset('assets/ui/bg_home.png')} alt="" className="home-bg-image" aria-hidden="true" />
         <div className="intro-card home-card">
           <img src={asset('assets/ui/logo_share_result.png')} alt="Cabe Ijo Game" className="home-logo-image" />
-          <button
-            id="startBtn"
-            className="home-start-btn"
-            aria-label="Mulai Main"
-            onClick={handleStart}
-          >
-            <img src={asset('assets/ui/button_petunjuk.png')} alt="Mulai Main" className="home-start-image" />
-          </button>
-          <img src={asset('assets/ui/panel_petunjuk.png')} alt="Petunjuk" className="home-panel-image" />
+          <div className="home-panel-wrap">
+            <img src={asset('assets/ui/panel_petunjuk.png')} alt="Petunjuk" className="home-panel-image" />
+            <button
+              id="startBtn"
+              className="home-start-btn"
+              aria-label="Mulai Main"
+              onClick={handleStart}
+            >
+              <img src={asset('assets/ui/button_petunjuk.png')} alt="Mulai Main" className="home-start-image" />
+            </button>
+          </div>
         </div>
       </section>
 
