@@ -930,11 +930,11 @@
 }
 
 .save-panel > label[for="playerNameInput"] {
-  margin-top: clamp(-8px, -1.1dvh, -4px);
+  margin-top: clamp(-18px, -2.5dvh, -12px);
 }
 
 .save-panel > label[for="playerInstagramInput"] {
-  margin-top: clamp(-4px, -0.7dvh, -1px);
+  margin-top: clamp(-18px, -2.8dvh, -12px);
 }
 
 .save-result-logo {
@@ -1017,7 +1017,7 @@
 .instagram-input-wrap {
   position: relative;
   width: 100%;
-  margin-top: clamp(6px, 1dvh, 10px);
+  margin-top: clamp(-6px, -0.9dvh, -3px);
   display: flex;
   align-items: center;
 }
