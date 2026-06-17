@@ -25,7 +25,7 @@
   top: env(safe-area-inset-top, 16px);
   left: 0;
   width: 100%;
-  padding-top: clamp(18px, 5dvh, 52px);
+  padding-top: clamp(8px, 2.5dvh, 26px);
   padding-left: clamp(14px, 4vw, 24px);
   padding-right: clamp(14px, 4vw, 24px);
   display: flex;
