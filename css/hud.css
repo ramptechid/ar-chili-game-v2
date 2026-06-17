@@ -901,6 +901,18 @@
   align-items: center;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .save-result-logo {
   width: clamp(148px, min(60vw, 25dvh), 212px);
   height: auto;
@@ -925,7 +937,7 @@
 .save-panel {
   width: clamp(260px, min(84vw, 46dvh), 318px);
   aspect-ratio: 762 / 1240;
-  padding: clamp(90px, min(15dvh, 24vw), 124px) clamp(34px, min(9vw, 4.8dvh), 44px) clamp(18px, 3dvh, 28px);
+  padding: clamp(112px, min(18dvh, 30vw), 148px) clamp(34px, min(9vw, 4.8dvh), 44px) clamp(18px, 3dvh, 28px);
   background: url("../assets/ui/panel_resul_new.png") center / 100% 100% no-repeat;
   display: flex;
   flex-direction: column;
@@ -935,8 +947,8 @@
 .save-total-box {
   width: clamp(88px, min(32vw, 15dvh), 118px);
   aspect-ratio: 293 / 216;
-  margin-bottom: clamp(8px, 1.4dvh, 13px);
-  padding-top: clamp(18px, 3.2dvh, 26px);
+  margin-bottom: clamp(22px, 3.2dvh, 30px);
+  padding-top: clamp(28px, 4.8dvh, 38px);
   background: url("../assets/ui/pane_total.png") center / 100% 100% no-repeat;
   display: flex;
   flex-direction: column;
@@ -980,6 +992,7 @@
 .instagram-input-wrap {
   position: relative;
   width: 100%;
+  margin-top: clamp(18px, 2.8dvh, 24px);
   display: flex;
   align-items: center;
 }
