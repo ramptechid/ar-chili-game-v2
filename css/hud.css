@@ -466,26 +466,34 @@
 .home-card {
   width: min(80vw, 320px);
   max-width: 320px;
+  min-height: 100dvh;
   max-height: none;
   overflow: visible;
-  padding: clamp(16px, 4dvh, 32px) 0 clamp(24px, 5dvh, 40px);
+  padding: 0 0 clamp(32px, 7dvh, 60px);
   border: none;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-end;
   gap: clamp(10px, 2.5dvh, 20px);
 }
 
 .home-logo-image {
+  position: absolute;
+  top: 96px;
+  left: 50%;
+  transform: translateX(-50%);
   width: min(55vw, 190px);
   height: auto;
   display: block;
-  margin-top: 96px;
+  z-index: 3;
+  pointer-events: none;
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.45));
 }
 
