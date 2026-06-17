@@ -953,6 +953,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  transform: translateY(clamp(-10px, -1.4dvh, -6px));
 }
 
 .modal-score-label {
@@ -1036,6 +1037,10 @@
 
 .name-input:focus {
   filter: drop-shadow(0 0 8px rgba(202, 255, 100, 0.48));
+}
+
+.save-panel > .name-input {
+  transform: translateY(clamp(-8px, -1.1dvh, -4px));
 }
 
 .email-note {
