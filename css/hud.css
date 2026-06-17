@@ -330,8 +330,8 @@
   overflow-x: hidden;
   background-color: #041006;
   isolation: isolate;
-  --home-logo-width: clamp(158px, min(64vw, 28dvh), 220px);
-  --home-panel-width: clamp(238px, min(84vw, 46dvh), 286px);
+  --home-logo-width: clamp(182px, min(72vw, 32dvh), 252px);
+  --home-panel-width: clamp(270px, min(92vw, 53dvh), 330px);
   --home-logo-top: calc(env(safe-area-inset-top, 0px) + clamp(46px, 10dvh, 76px));
   --home-panel-top: calc(env(safe-area-inset-top, 0px) + clamp(186px, 31dvh, 232px));
 }
@@ -1601,11 +1601,11 @@
   }
 
   .home-logo-image {
-    width: clamp(148px, min(60vw, 27dvh), 190px);
+    width: clamp(168px, min(68vw, 30dvh), 218px);
   }
 
   .home-panel-wrap {
-    width: clamp(224px, min(84vw, 46dvh), 276px);
+    width: clamp(252px, min(92vw, 52dvh), 312px);
   }
 
   .home-start-btn {
