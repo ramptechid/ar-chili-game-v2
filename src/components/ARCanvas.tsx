@@ -1,10 +1,8 @@
 import { Suspense, useEffect, useState } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
-import { Environment } from '@react-three/drei';
 import { useStore } from '../store/useStore';
 import { DeviceOrientationControls } from './DeviceOrientationControls';
 import { HuntObject } from './HuntObject';
-import { ErrorBoundary } from './ErrorBoundary';
 import * as THREE from 'three';
 import { XR, useXR } from '@react-three/xr';
 import { xrStore } from '../store/xr';
@@ -50,28 +48,25 @@ function SceneContent() {
     <>
       {!isXR && <DeviceOrientationControls />}
       <RaycastController />
-      <ambientLight intensity={0.65} />
-      <directionalLight position={[1.8, 3.2, 1.6]} intensity={2.2} />
-      <directionalLight position={[-2.2, 1.4, -1.4]} color="#cfe8ff" intensity={0.85} />
-      <Suspense fallback={null}>
-        <Environment preset="city" />
-      </Suspense>
-      {isPlaying && (
-        <ErrorBoundary>
-          <Suspense fallback={null}>
-            {objects.map(obj =>
-              !obj.found && (
-                <HuntObject
-                  key={obj.id}
-                  id={obj.id}
-                  position={[obj.x, obj.y, obj.z]}
-                  type={obj.type}
-                  isTarget={obj.isTarget}
-                />
-              )
-            )}
+
+      {/* Lights only — no Environment CDN dependency that can fail on iOS */}
+      <ambientLight intensity={1.0} />
+      <directionalLight position={[1.8, 3.2, 1.6]} intensity={2.5} castShadow={false} />
+      <directionalLight position={[-2.2, 1.4, -1.4]} color="#cfe8ff" intensity={1.0} />
+      <hemisphereLight args={['#87CEEB', '#228B22', 0.6]} />
+
+      {/* Each object has its own Suspense — one model failing doesn't block others */}
+      {isPlaying && objects.map(obj =>
+        !obj.found && (
+          <Suspense key={obj.id} fallback={null}>
+            <HuntObject
+              id={obj.id}
+              position={[obj.x, obj.y, obj.z]}
+              type={obj.type}
+              isTarget={obj.isTarget}
+            />
           </Suspense>
-        </ErrorBoundary>
+        )
       )}
     </>
   );
@@ -87,7 +82,7 @@ export function ARCanvas() {
     });
   }, []);
 
-  // Mount canvas only when active — avoids iOS WebGL context init inside display:none
+  // Mount canvas only when active — WebGL context created in visible element (iOS fix)
   const isActive = gameState === 'countdown' || gameState === 'playing';
   if (!isActive) return null;
 
@@ -105,10 +100,11 @@ export function ARCanvas() {
     <div style={containerStyle}>
       <Canvas
         camera={{ position: [0, 0, 0], fov: 75 }}
+        dpr={[1, 2]}             // cap DPR — iPhone Pro DPR=3 overflows iOS WebGL memory
         style={{ width: '100%', height: '100%', background: 'transparent' }}
         gl={{
           alpha: true,
-          antialias: false,           // off — iOS berat dengan antialias
+          antialias: false,      // off — major perf/memory saving on iOS
           powerPreference: 'high-performance',
           failIfMajorPerformanceCaveat: false,
         }}

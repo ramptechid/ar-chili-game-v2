@@ -11,7 +11,7 @@ interface HuntObjectProps {
   isTarget: boolean;
 }
 
-const MODELS: Record<string, string> = {
+export const MODELS: Record<string, string> = {
   type0:   asset('assets/models/Cabe.glb'),
   type1:   asset('assets/models/Alarm_Clock.glb'),
   type2:   asset('assets/models/Ball.glb'),
@@ -26,8 +26,21 @@ const MODELS: Record<string, string> = {
   type11:  asset('assets/models/pack_cabeijo_jumbo.glb'),
 };
 
-// Preload all models at startup
-Object.values(MODELS).forEach(url => useGLTF.preload(url));
+// Preload all models — all files now under 1.3MB, safe for iOS
+function isIOSDevice() {
+  if (typeof navigator === 'undefined') return false;
+  const ua = navigator.userAgent || '';
+  const platform = navigator.platform || '';
+  const iPadOS = platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+  return /iPad|iPhone|iPod/.test(ua) || iPadOS;
+}
+
+const IOS_MODEL_KEYS = new Set(['type0', 'type1', 'type2', 'type3', 'type4', 'type5', 'type6', 'type9', 'type10', 'type11']);
+const preloadEntries = isIOSDevice()
+  ? Object.entries(MODELS).filter(([key]) => IOS_MODEL_KEYS.has(key))
+  : Object.entries(MODELS);
+
+preloadEntries.forEach(([, url]) => useGLTF.preload(url));
 
 export function HuntObject({ id, position, type, isTarget }: HuntObjectProps) {
   const meshRef = useRef<THREE.Group>(null);

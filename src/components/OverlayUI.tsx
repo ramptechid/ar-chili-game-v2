@@ -99,10 +99,13 @@ export function OverlayUI() {
   const lastCatchRef  = useRef(0);
   const prevScoreRef  = useRef(score);
   const pauseStartRef = useRef(0);
+  const countdownTimersRef = useRef<number[]>([]);
 
   const remainMs  = Math.max(0, GAME_DURATION_MS - elapsedTime);
   const remainSec = Math.ceil(remainMs / 1000);
   const isUrgent  = remainSec <= 10 && remainSec > 0;
+
+  useEffect(() => () => clearCountdownTimers(), []);
 
   // ── catch success effects ────────────────────────────────────────────────
   useEffect(() => {
@@ -184,28 +187,42 @@ export function OverlayUI() {
     mulai: asset('assets/ui/mulai.png'),
   };
 
-  function runCountdown() {
+  async function requestFullscreenMode() {
+    const el = document.documentElement as any;
+    try {
+      if (!document.fullscreenElement && el.requestFullscreen) {
+        await el.requestFullscreen({ navigationUI: 'hide' });
+      } else if (!document.fullscreenElement && el.webkitRequestFullscreen) {
+        el.webkitRequestFullscreen();
+      }
+    } catch {}
+  }
+
+  function clearCountdownTimers() {
+    countdownTimersRef.current.forEach(id => window.clearTimeout(id));
+    countdownTimersRef.current = [];
+  }
+
+  function runCountdown(options: { fullscreen?: boolean } = {}) {
+    clearCountdownTimers();
+    if (options.fullscreen) void requestFullscreenMode();
     setGameState('countdown');
     setCountdownStep(3);
-    setTimeout(() => setCountdownStep(2),      900);
-    setTimeout(() => setCountdownStep(1),     1800);
-    setTimeout(() => setCountdownStep('mulai'), 2700);
-    setTimeout(() => { setCountdownStep(null); startGame(); }, 3600);
+    countdownTimersRef.current = [
+      window.setTimeout(() => setCountdownStep(2),        900),
+      window.setTimeout(() => setCountdownStep(1),       1800),
+      window.setTimeout(() => setCountdownStep('mulai'), 2700),
+      window.setTimeout(() => {
+        setCountdownStep(null);
+        startGame();
+        countdownTimersRef.current = [];
+      }, 3600),
+    ];
   }
 
   // ── start game handler ───────────────────────────────────────────────────
   async function handleStart() {
     setIntroVisible(false);
-
-    // Android: standard Fullscreen API
-    const el = document.documentElement as any;
-    try {
-      if (el.requestFullscreen) {
-        await el.requestFullscreen({ navigationUI: 'hide' });
-      } else if (el.webkitRequestFullscreen) {
-        el.webkitRequestFullscreen();
-      }
-    } catch {}
 
     // Lock portrait orientation (Android Chrome + some iOS contexts)
     try {
@@ -239,6 +256,7 @@ export function OverlayUI() {
           audio: false,
         });
         stream.getTracks().forEach(t => t.stop());
+        await requestFullscreenMode();
       } catch {
         setNoticeTitle('Akses Kamera Diperlukan');
         setNoticeText('Izinkan akses kamera agar tampilan AR bisa aktif.');
@@ -263,7 +281,7 @@ export function OverlayUI() {
     }
 
     // Semua permission granted → countdown → game timer mulai setelah countdown selesai
-    runCountdown();
+    runCountdown({ fullscreen: !navigator.mediaDevices?.getUserMedia });
   }
 
   // ── save score handler ───────────────────────────────────────────────────
@@ -331,6 +349,7 @@ export function OverlayUI() {
 
   function handlePauseRestart() {
     setShowPauseMenu(false);
+    clearCountdownTimers();
     resetGame();
     setShowPlusOne(false);
     setPlusPoints(1);
@@ -342,6 +361,7 @@ export function OverlayUI() {
   }
 
   function handleReset() {
+    clearCountdownTimers();
     resetGame();
     setShowPlusOne(false);
     setPlusPoints(1);
@@ -384,20 +404,22 @@ export function OverlayUI() {
           <div className={`plus-one${plusPoints >= 5 ? ' plus-three' : plusPoints >= 3 ? ' plus-two' : ''}`} key={`p1-${score}`}>+{plusPoints}</div>
         )}
 
-        <div
-          ref={aimRef}
-          className={`aim-area${catchFlash ? ' catch-flash' : ''}`}
-        >
-          <img src={asset('assets/ui/target_brackets.png')} alt="" className="aim-brackets" aria-hidden="true" />
-          <img
-            src={asset('assets/ui/voice_meter_track.png')}
-            alt=""
-            className="aim-track"
-            aria-hidden="true"
-            onPointerDown={triggerCatch}
-          />
-          <div className="aim-dot" />
-        </div>
+        {isPlaying && (
+          <div
+            ref={aimRef}
+            className={`aim-area${catchFlash ? ' catch-flash' : ''}`}
+          >
+            <img src={asset('assets/ui/target_brackets.png')} alt="" className="aim-brackets" aria-hidden="true" />
+            <img
+              src={asset('assets/ui/voice_meter_track.png')}
+              alt=""
+              className="aim-track"
+              aria-hidden="true"
+              onPointerDown={triggerCatch}
+            />
+            <div className="aim-dot" />
+          </div>
+        )}
 
         {/* Score badges below aim ring */}
         <div className="score-frames-wrap">
@@ -448,9 +470,9 @@ export function OverlayUI() {
 
       {/* ── INTRO SCREEN ─────────────────────────────────────────────── */}
       <section id="introScreen" className={`screen${isIntro && introVisible ? ' active' : ''}`}>
-        <img src={asset('assets/ui/bg_home.png')} alt="" className="home-bg-image" aria-hidden="true" />
+        <img src={asset('assets/ui/bg_home_new.png')} alt="" className="home-bg-image" aria-hidden="true" />
         <div className="intro-card home-card">
-          <img src={asset('assets/ui/logo_share_result.svg')} alt="Cabe Ijo Game" className="home-logo-image" />
+          <img src={asset('assets/ui/logo_share_result.png')} alt="Cabe Ijo Game" className="home-logo-image" />
           <div className="home-panel-wrap">
             <img src={asset('assets/ui/panel_petunjuk.svg')} alt="Petunjuk" className="home-panel-image" />
             <button
@@ -525,8 +547,7 @@ export function OverlayUI() {
       {/* ── SAVE SCORE MODAL ─────────────────────────────────────────── */}
       <div id="saveScoreModal" className={`save-modal${showSaveModal ? '' : ' hidden'}`}>
         <div className="save-modal-card">
-          <img src={asset('assets/ui/logo_brand.png')}          alt="Indomie"       className="save-brand-image" />
-          <img src={asset('assets/ui/title_cari_cabe_ijo.png')} alt="Cari Cabe Ijo" className="save-title-image" />
+          <img src={asset('assets/ui/logo_result_new.png')} alt="Cabe Ijo Game" className="save-result-logo" />
 
           {showLeaderboard ? (
             /* ── LEADERBOARD VIEW ── */
@@ -566,12 +587,11 @@ export function OverlayUI() {
           ) : (
             /* ── FORM VIEW ── */
             <div className="save-panel">
-              <div className="result-score-box save-score-box">
-                <div className="modal-score-label">CABE TERTANGKAP</div>
+              <div className="save-total-box">
                 <div id="modalScoreText" className="modal-score-value">{score}</div>
               </div>
 
-              <label className="name-label" htmlFor="playerNameInput">Nama</label>
+              <label className="sr-only" htmlFor="playerNameInput">Nama</label>
               <input
                 id="playerNameInput"
                 className="name-input"
@@ -582,7 +602,7 @@ export function OverlayUI() {
                 onChange={e => setPlayerName(e.target.value)}
               />
 
-              <label className="name-label email-label" htmlFor="playerInstagramInput">
+              <label className="sr-only" htmlFor="playerInstagramInput">
                 Username Instagram
               </label>
               <div className="instagram-input-wrap">
@@ -592,7 +612,7 @@ export function OverlayUI() {
                   className="name-input instagram-input"
                   type="text"
                   maxLength={30}
-                  placeholder="username_kamu"
+                  placeholder=""
                   autoCapitalize="none"
                   autoCorrect="off"
                   value={playerInstagram}
@@ -600,39 +620,38 @@ export function OverlayUI() {
                 />
               </div>
 
-              <p className="email-note">
-                Masukkan username Instagram kamu (tanpa @). Digunakan untuk penukaran hadiah.
-              </p>
-
               <div id="saveMessage" className={`save-message${saveMsgCls ? ` ${saveMsgCls}` : ''}`}>
                 {saveMsg}
               </div>
 
               <button
                 id="submitScoreBtn"
-                className="primary-btn"
+                className="save-image-btn"
                 disabled={saving || scoreSaved}
                 onClick={handleSave}
+                aria-label="Simpan"
               >
-                SIMPAN
+                <img src={asset('assets/ui/button_simpan_new.png')} alt="Simpan" />
               </button>
 
               {isGameover ? (
                 <button
                   id="playAgainBtn"
-                  className="secondary-btn"
+                  className="save-image-btn save-image-btn--secondary"
                   disabled={playAgainOff}
                   onClick={() => { setShowSaveModal(false); handleReset(); }}
+                  aria-label="Batal"
                 >
-                  {playAgainLabel}
+                  <img src={asset('assets/ui/button_batal_new.png')} alt="Batal" />
                 </button>
               ) : (
                 <button
                   id="closeSaveModalBtn"
-                  className="secondary-btn"
+                  className="save-image-btn save-image-btn--secondary"
                   onClick={() => setShowSaveModal(false)}
+                  aria-label="Batal"
                 >
-                  BATAL
+                  <img src={asset('assets/ui/button_batal_new.png')} alt="Batal" />
                 </button>
               )}
             </div>

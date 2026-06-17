@@ -17,8 +17,12 @@ export function DeviceOrientationControls() {
 
   useFrame(() => {
     if (controlsRef.current) {
-      controlsRef.current.update();
-      invalidate();
+      try {
+        controlsRef.current.update();
+        invalidate();
+      } catch {
+        // suppress — can throw on iOS before first deviceorientation event
+      }
     }
   });
 

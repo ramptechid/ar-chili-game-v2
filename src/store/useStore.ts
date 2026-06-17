@@ -45,27 +45,71 @@ const TARGET_DEFS = [
   { type: 11, points: 5, count: 2 },
 ];
 
-function spawnPos() {
-  const r     = 5 + Math.random() * 6;
+const IOS_TARGET_DEFS = [
+  { type: 0,  points: 1, count: 3 },
+  { type: 10, points: 3, count: 2 },
+  { type: 11, points: 5, count: 1 },
+];
+
+const DEFAULT_DECOY_TYPES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const IOS_DECOY_TYPES = [1, 2, 3, 4, 5, 6, 9];
+
+function isIOSDevice() {
+  if (typeof navigator === 'undefined') return false;
+  const ua = navigator.userAgent || '';
+  const platform = navigator.platform || '';
+  const iPadOS = platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+  return /iPad|iPhone|iPod/.test(ua) || iPadOS;
+}
+
+function getSpawnProfile() {
+  if (!isIOSDevice()) {
+    return {
+      targetDefs: TARGET_DEFS,
+      decoyCount: TOTAL_DECOYS,
+      decoyTypes: DEFAULT_DECOY_TYPES,
+      radiusMin: 5,
+      radiusRange: 6,
+      phiRange: Math.PI * 0.4,
+      yMin: -2,
+      yMax: 6,
+    };
+  }
+
+  return {
+    targetDefs: IOS_TARGET_DEFS,
+    decoyCount: 4,
+    decoyTypes: IOS_DECOY_TYPES,
+    radiusMin: 3.5,
+    radiusRange: 3.5,
+    phiRange: Math.PI * 0.28,
+    yMin: -1.3,
+    yMax: 4,
+  };
+}
+
+function spawnPos(profile = getSpawnProfile()) {
+  const r     = profile.radiusMin + Math.random() * profile.radiusRange;
   const theta = Math.random() * Math.PI * 2;
-  const phi   = (Math.random() - 0.5) * Math.PI * 0.4;
+  const phi   = (Math.random() - 0.5) * profile.phiRange;
   return {
     x: r * Math.cos(phi) * Math.cos(theta),
-    y: Math.max(-2, Math.min(6, r * Math.sin(phi))),
+    y: Math.max(profile.yMin, Math.min(profile.yMax, r * Math.sin(phi))),
     z: r * Math.cos(phi) * Math.sin(theta),
   };
 }
 
 function generatePositions(): ObjectPosition[] {
   const result: ObjectPosition[] = [];
+  const profile = getSpawnProfile();
   const now = Date.now();
   let targetIdx = 0;
 
-  for (const def of TARGET_DEFS) {
+  for (const def of profile.targetDefs) {
     for (let i = 0; i < def.count; i++) {
       result.push({
         id: `target-${targetIdx++}`,
-        ...spawnPos(),
+        ...spawnPos(profile),
         found: false,
         type: def.type,
         isTarget: true,
@@ -75,12 +119,13 @@ function generatePositions(): ObjectPosition[] {
       });
     }
   }
-  for (let i = 0; i < TOTAL_DECOYS; i++) {
+  for (let i = 0; i < profile.decoyCount; i++) {
+    const type = profile.decoyTypes[Math.floor(Math.random() * profile.decoyTypes.length)];
     result.push({
       id: `decoy-${i}`,
-      ...spawnPos(),
+      ...spawnPos(profile),
       found: false,
-      type: Math.floor(Math.random() * 9) + 1,
+      type,
       isTarget: false,
       points: 0,
       spawnTime: now,
@@ -124,6 +169,7 @@ export const useStore = create<StoreState>((set, get) => ({
 
     const now     = Date.now();
     const elapsed = now - startTime;
+    const profile = getSpawnProfile();
 
     if (elapsed >= GAME_DURATION_MS) {
       set({ elapsedTime: GAME_DURATION_MS });
@@ -135,7 +181,7 @@ export const useStore = create<StoreState>((set, get) => ({
     const newObjects = objects.map(obj => {
       if (!obj.found && now - obj.spawnTime > obj.duration) {
         changed = true;
-        return { ...obj, ...spawnPos(), spawnTime: now, duration: 3000 + Math.random() * 5000 };
+        return { ...obj, ...spawnPos(profile), spawnTime: now, duration: 3000 + Math.random() * 5000 };
       }
       return obj;
     });
@@ -149,6 +195,7 @@ export const useStore = create<StoreState>((set, get) => ({
 
     const hit = state.objects.find(o => o.id === id);
     if (!hit || hit.found) return;
+    const profile = getSpawnProfile();
 
     if (hit.isTarget) {
       // Disappear immediately, respawn at new position after 1.5 s
@@ -163,7 +210,7 @@ export const useStore = create<StoreState>((set, get) => ({
         set({
           objects: get().objects.map(o =>
             o.id === id
-              ? { ...o, ...spawnPos(), found: false, spawnTime: Date.now(), duration: 4000 + Math.random() * 6000 }
+              ? { ...o, ...spawnPos(profile), found: false, spawnTime: Date.now(), duration: 4000 + Math.random() * 6000 }
               : o
           ),
         });
