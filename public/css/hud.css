@@ -1188,16 +1188,14 @@ html:not(:fullscreen) .save-panel > .save-image-btn:not(.save-image-btn--seconda
 }
 
 .lb-row {
-  width: calc(100% + 2 * clamp(14px, 4vw, 20px));
-  margin-left: calc(-1 * clamp(14px, 4vw, 20px));
-  margin-right: calc(-1 * clamp(14px, 4vw, 20px));
+  width: 85%;
   background: url("../assets/ui/panel_name_score_leaderboard.png") center / 100% 100% no-repeat;
   display: grid;
   grid-template-columns: 26px 1fr auto;
   align-items: center;
   gap: 0 4px;
-  padding: clamp(4px, 0.7dvh, 6px) clamp(10px, 2.8vw, 14px);
-  min-height: clamp(24px, 4dvh, 32px);
+  padding: clamp(6px, 1dvh, 9px) clamp(10px, 2.8vw, 14px);
+  min-height: clamp(30px, 5dvh, 38px);
   font-size: clamp(10px, 2.8vw, 12px);
   font-weight: 700;
   color: #ffffff;
@@ -1224,7 +1222,7 @@ html:not(:fullscreen) .save-panel > .save-image-btn:not(.save-image-btn--seconda
 }
 
 .lb-sep {
-  width: 100%;
+  width: 85%;
   height: auto;
   display: block;
   margin: clamp(1px, 0.2dvh, 3px) 0;
