@@ -6,6 +6,11 @@
   pointer-events: none;
   --voice-level: 0;
   --voice-sweep: 0deg;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --aim-size: clamp(190px, min(66vmin, 42dvh), 320px);
   font-family: "Saira", Arial, Helvetica, sans-serif;
 }
 
@@ -15,19 +20,19 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: url("../assets/ui/BG Hover.png") center / 100% 100% no-repeat;
+  background: url("../assets/ui/BG Hover.png") center / cover no-repeat;
   opacity: 0.95;
 }
 
 /* TOP HUD */
 .top-hud {
   position: fixed;
-  top: env(safe-area-inset-top, 16px);
+  top: 0;
   left: 0;
   width: 100%;
-  padding-top: clamp(18px, 5dvh, 52px);
-  padding-left: clamp(14px, 4vw, 24px);
-  padding-right: clamp(14px, 4vw, 24px);
+  padding-top: calc(var(--safe-top) + clamp(12px, 4dvh, 44px));
+  padding-left: calc(var(--safe-left) + clamp(12px, 4vw, 24px));
+  padding-right: calc(var(--safe-right) + clamp(12px, 4vw, 24px));
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -41,7 +46,7 @@
 
 .timer-card {
   position: relative;
-  width: clamp(106px, 29vw, 138px);
+  width: clamp(96px, min(29vw, 16dvh), 138px);
   aspect-ratio: 239 / 161;
   padding: 0 clamp(14px, 4vw, 22px);
   display: flex;
@@ -74,8 +79,8 @@
   position: fixed;
   left: 50%;
   top: 50%;
-  width: clamp(236px, 70vmin, 320px);
-  height: clamp(236px, 70vmin, 320px);
+  width: var(--aim-size);
+  height: var(--aim-size);
   transform: translate(-50%, -50%);
   transform-origin: center center;
   z-index: 2;
@@ -325,6 +330,9 @@
   overflow-x: hidden;
   background-color: #041006;
   isolation: isolate;
+  --home-width: min(82vw, 340px);
+  --home-logo-width: clamp(150px, min(58vw, 24dvh), 230px);
+  --home-panel-width: clamp(238px, min(76vw, 42dvh), 312px);
 }
 
 .home-bg-image {
@@ -468,11 +476,12 @@
 
 /* HOME SCREEN */
 .home-card {
-  width: min(80vw, 320px);
-  max-width: 320px;
+  width: var(--home-width);
+  max-width: var(--home-width);
+  min-height: 100dvh;
   max-height: none;
   overflow: visible;
-  padding: clamp(16px, 4dvh, 32px) 0 clamp(24px, 5dvh, 40px);
+  padding: calc(env(safe-area-inset-top, 0px) + clamp(18px, 5dvh, 42px)) 0 calc(env(safe-area-inset-bottom, 0px) + clamp(18px, 4dvh, 36px));
   border: none;
   border-radius: 0;
   background: transparent;
@@ -483,15 +492,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
   gap: clamp(10px, 2.5dvh, 20px);
 }
 
 .home-logo-image {
-  position: absolute;
-  top: 88px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(60vw, 210px);
+  position: relative;
+  width: var(--home-logo-width);
   height: auto;
   display: block;
   z-index: 3;
@@ -504,8 +511,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: min(72vw, 272px);
-  margin-top: clamp(148px, 30dvh, 198px);
+  width: var(--home-panel-width);
+  margin-top: clamp(12px, 3.2dvh, 34px);
 }
 
 .home-panel-image {
@@ -516,10 +523,10 @@
 }
 
 .home-start-btn {
-  width: min(52vw, 172px);
+  width: clamp(142px, min(52vw, 23dvh), 190px);
   min-height: 0;
   height: auto;
-  margin-top: -72px;
+  margin-top: clamp(-78px, -9.5dvh, -46px);
   position: relative;
   z-index: 2;
   padding: 0;
@@ -1296,7 +1303,10 @@
 .score-frames-wrap {
   position: fixed;
   left: 50%;
-  top: calc(50% + clamp(176px, 44vmin, 222px));
+  top: min(
+    calc(50% + clamp(126px, 31vmin, 206px)),
+    calc(100dvh - env(safe-area-inset-bottom, 0px) - clamp(128px, 20dvh, 178px))
+  );
   transform: translateX(-50%);
   z-index: 3;
   display: flex;
@@ -1307,7 +1317,7 @@
 .score-frames-row {
   display: flex;
   align-items: flex-end;
-  gap: clamp(10px, 4vw, 24px);
+  gap: clamp(8px, min(3.5vw, 2.4dvh), 24px);
 }
 
 .score-frame-item {
@@ -1316,14 +1326,14 @@
 }
 
 .score-frame-single {
-  height: clamp(48px, 16vw, 92px);
+  height: clamp(42px, min(16vw, 10dvh), 92px);
   width: auto;
   display: block;
   pointer-events: none;
 }
 
 .score-frame-item--pack .score-frame-single {
-  height: clamp(40px, 13vw, 76px);
+  height: clamp(36px, min(13vw, 8.5dvh), 76px);
 }
 
 .score-frame-anchor {
@@ -1339,7 +1349,7 @@
 .score-frame-anchor--jumbo { top: 60%; left: 72%; }
 
 .score-frame-num {
-  font-size: clamp(16px, 5vw, 30px);
+  font-size: clamp(15px, min(5vw, 3.6dvh), 30px);
   font-weight: 900;
   color: #73ff76;
   line-height: 1;
@@ -1353,7 +1363,7 @@
 }
 
 .hud-footer-img {
-  width: clamp(320px, 92vw, 460px);
+  width: clamp(260px, min(92vw, 52dvh), 460px);
   height: auto;
   display: block;
   margin-top: 18px;
@@ -1458,11 +1468,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
   pointer-events: none;
 }
 
 .countdown-img {
-  width: min(55vw, 220px);
+  width: clamp(132px, min(52vw, 28dvh), 240px);
   height: auto;
   animation: countdownPop 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   filter: drop-shadow(0 0 32px rgba(100, 255, 100, 0.7));
@@ -1516,12 +1527,11 @@
 @media (orientation: landscape) and (max-height: 520px) {
   .top-hud {
     width: min(520px, 58vw);
-    padding-top: 10px;
+    padding-top: calc(env(safe-area-inset-top, 0px) + 8px);
   }
 
   .timer-card {
-    min-width: 108px;
-    height: 50px;
+    width: clamp(88px, 22vw, 112px);
   }
 
   .hint-box {
@@ -1530,8 +1540,20 @@
 
   .aim-area {
     top: 50%;
-    width: clamp(150px, 45vmin, 210px);
-    height: clamp(150px, 45vmin, 210px);
+    --aim-size: clamp(150px, 44vmin, 210px);
+  }
+
+  .score-frames-wrap {
+    top: 50%;
+    left: auto;
+    right: calc(env(safe-area-inset-right, 0px) + clamp(12px, 3vw, 24px));
+    transform: translateY(-50%);
+  }
+
+  .score-frames-row {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: clamp(4px, 1.8dvh, 10px);
   }
 
   .bottom-hud {
@@ -1571,28 +1593,28 @@
   }
 
   .home-card {
-    width: min(78vw, 280px);
+    width: var(--home-width);
     gap: clamp(6px, 1.5dvh, 12px);
     padding-top: clamp(10px, 2.5dvh, 20px);
     padding-bottom: clamp(16px, 3dvh, 28px);
   }
 
   .home-logo-image {
-    width: min(44vw, 140px);
+    width: clamp(132px, min(48vw, 22dvh), 180px);
   }
 
   .home-panel-wrap {
-    width: min(76vw, 270px);
+    width: clamp(220px, min(76vw, 42dvh), 276px);
+    margin-top: clamp(8px, 2dvh, 18px);
   }
 
   .home-start-btn {
-    width: min(56vw, 180px);
-    margin-top: -60px;
+    width: clamp(136px, min(54vw, 24dvh), 180px);
+    margin-top: clamp(-64px, -9dvh, -42px);
   }
 
   .aim-area {
-    width: clamp(212px, 64vmin, 260px);
-    height: clamp(212px, 64vmin, 260px);
+    --aim-size: clamp(186px, min(62vmin, 42dvh), 260px);
   }
 
   .catch-btn {
