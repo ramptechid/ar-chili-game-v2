@@ -491,7 +491,7 @@
   top: 120px;
   left: 50%;
   transform: translateX(-50%);
-  width: min(55vw, 190px);
+  width: min(48vw, 168px);
   height: auto;
   display: block;
   z-index: 3;
@@ -504,7 +504,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: min(78vw, 300px);
+  width: min(82vw, 310px);
   margin-top: clamp(160px, 32dvh, 220px);
 }
 
@@ -519,7 +519,7 @@
   width: min(52vw, 172px);
   min-height: 0;
   height: auto;
-  margin-top: -82px;
+  margin-top: -72px;
   position: relative;
   z-index: 2;
   padding: 0;
@@ -1576,16 +1576,16 @@
   }
 
   .home-logo-image {
-    width: min(50vw, 160px);
+    width: min(44vw, 140px);
   }
 
   .home-panel-wrap {
-    width: min(72vw, 250px);
+    width: min(76vw, 270px);
   }
 
   .home-start-btn {
-    width: min(62vw, 200px);
-    margin-top: -64px;
+    width: min(56vw, 180px);
+    margin-top: -60px;
   }
 
   .aim-area {
