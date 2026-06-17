@@ -942,7 +942,7 @@
   width: clamp(148px, min(60vw, 25dvh), 212px);
   height: auto;
   display: block;
-  margin: 8px auto clamp(-26px, -3.8dvh, -12px);
+  margin: 0 auto clamp(-26px, -3.8dvh, -12px);
   position: relative;
   z-index: 2;
   pointer-events: none;
@@ -963,6 +963,7 @@
   width: clamp(260px, min(84vw, 46dvh), 318px);
   aspect-ratio: 762 / 1240;
   padding: clamp(98px, min(15.8dvh, 26vw), 130px) clamp(34px, min(9vw, 4.8dvh), 44px) clamp(18px, 3dvh, 28px);
+  margin-top: -8px;
   background: url("../assets/ui/panel_resul_new.png") center / 100% 100% no-repeat;
   display: flex;
   flex-direction: column;
