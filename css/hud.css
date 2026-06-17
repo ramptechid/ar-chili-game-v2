@@ -482,7 +482,7 @@
 }
 
 .home-logo-image {
-  width: min(68vw, 240px);
+  width: min(55vw, 190px);
   height: auto;
   display: block;
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.45));
@@ -492,11 +492,12 @@
   width: min(78vw, 300px);
   height: auto;
   display: block;
+  margin-top: -4px;
   filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.35));
 }
 
 .home-start-btn {
-  width: min(60vw, 210px);
+  width: min(62vw, 220px);
   min-height: 0;
   height: auto;
   padding: 0;
@@ -1533,15 +1534,15 @@
   }
 
   .home-logo-image {
-    width: min(62vw, 200px);
+    width: min(50vw, 160px);
   }
 
   .home-panel-image {
-    width: min(74vw, 260px);
+    width: min(72vw, 250px);
   }
 
   .home-start-btn {
-    width: min(55vw, 180px);
+    width: min(58vw, 190px);
   }
 
   .aim-area {
