@@ -90,6 +90,7 @@ export function OverlayUI() {
   const [catchFlash,   setCatchFlash]   = useState(false);
   const [showPauseMenu,    setShowPauseMenu]    = useState(false);
   const [showLeaderboard,  setShowLeaderboard]  = useState(false);
+  const [countdownStep,    setCountdownStep]    = useState<3|2|1|'mulai'|null>(null);
 
   const aimRef        = useRef<HTMLDivElement>(null);
   const lastCatchRef  = useRef(0);
@@ -159,6 +160,22 @@ export function OverlayUI() {
     return () => clearInterval(iv);
   }, [gameState]);
 
+  // ── countdown then start ─────────────────────────────────────────────────
+  const COUNTDOWN_IMG: Record<string, string> = {
+    '3': asset('assets/ui/angka_3.png'),
+    '2': asset('assets/ui/angka_2.png'),
+    '1': asset('assets/ui/angka_1.png'),
+    mulai: asset('assets/ui/mulai.png'),
+  };
+
+  function runCountdown() {
+    setCountdownStep(3);
+    setTimeout(() => setCountdownStep(2),      900);
+    setTimeout(() => setCountdownStep(1),     1800);
+    setTimeout(() => setCountdownStep('mulai'), 2700);
+    setTimeout(() => { setCountdownStep(null); startGame(); }, 3600);
+  }
+
   // ── start game handler ───────────────────────────────────────────────────
   async function handleStart() {
     // Android: standard Fullscreen API
@@ -188,7 +205,7 @@ export function OverlayUI() {
       try {
         if (await navigator.xr.isSessionSupported('immersive-ar')) {
           await xrStore.enterAR();
-          startGame();
+          runCountdown();
           return;
         }
       } catch {}
@@ -206,7 +223,7 @@ export function OverlayUI() {
       } catch {}
     }
 
-    startGame();
+    runCountdown();
   }
 
   // ── save score handler ───────────────────────────────────────────────────
@@ -547,6 +564,17 @@ export function OverlayUI() {
           )}
         </div>
       </div>
+      {/* ── COUNTDOWN OVERLAY ───────────────────────────────────────── */}
+      {countdownStep !== null && (
+        <div className="countdown-overlay">
+          <img
+            key={String(countdownStep)}
+            src={COUNTDOWN_IMG[String(countdownStep)]}
+            alt={String(countdownStep)}
+            className="countdown-img"
+          />
+        </div>
+      )}
     </>
   );
 }
