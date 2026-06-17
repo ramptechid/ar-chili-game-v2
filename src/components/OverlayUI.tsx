@@ -34,28 +34,17 @@ async function buildShareBlob(score: number): Promise<Blob> {
   const ctx = canvas.getContext('2d')!;
 
   try {
-    const [bg, logo, frame, footer] = await Promise.all([
-      loadImg(asset('assets/ui/bg_share_result.png')),
-      loadImg(asset('assets/ui/logo_share_result.png')),
-      loadImg(asset('assets/ui/frame_durasi_share.png')),
-      loadImg(asset('assets/ui/footer_share.png')),
+    const [bg, panel] = await Promise.all([
+      loadImg(asset('assets/ui/bg_share_social_new.png')),
+      loadImg(asset('assets/ui/panel_score_share_social.png')),
     ]);
-    ctx.fillStyle = '#020803';
-    ctx.fillRect(0, 0, 1080, 1920);
-    drawContain(ctx, bg,     108, 0,    864, 1920);
-    drawContain(ctx, logo,   187, 150,  706,  630);
-    drawContain(ctx, frame,  259, 958,  562,  285);
-    drawContain(ctx, footer, 295, 1482, 490,  120);
+    ctx.drawImage(bg, 0, 0, 1080, 1920);
+    drawContain(ctx, panel, 0, 0, 1080, 1920);
     ctx.textAlign    = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillStyle    = '#70ff70';
-    ctx.font         = '900 148px Saira, Arial, Helvetica, sans-serif';
-    ctx.fillText(`${score}`, 540, 1080);
-    ctx.font         = '900 58px Saira, Arial, Helvetica, sans-serif';
-    ctx.fillText('CABE!', 540, 1170);
-    ctx.fillStyle    = '#ffffff';
-    ctx.font         = 'italic 900 34px Saira, Arial, Helvetica, sans-serif';
-    ctx.fillText('BISA LEBIH BANYAK?', 540, 1432);
+    ctx.font         = '900 190px Saira, Arial, Helvetica, sans-serif';
+    ctx.fillText(`${score}`, 540, 900);
   } catch {
     ctx.fillStyle = '#041006';
     ctx.fillRect(0, 0, 1080, 1920);
