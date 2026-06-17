@@ -593,7 +593,7 @@ export function OverlayUI() {
               <button
                 className="lb-btn-play"
                 disabled={playAgainOff}
-                onClick={() => { setShowSaveModal(false); setShowLeaderboard(false); handleReset(); }}
+                onClick={() => { setPlayerName(''); setPlayerInstagram(''); setShowSaveModal(false); setShowLeaderboard(false); handleReset(); }}
               >
                 <img src={asset('assets/ui/button_main_lagi_new.png')} alt="Main Lagi" />
               </button>

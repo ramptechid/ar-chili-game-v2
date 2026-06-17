@@ -1075,7 +1075,7 @@
 
 .save-message {
   min-height: 13px;
-  margin: 5px 0 0;
+  margin: 14px 0 0;
   font-size: clamp(8px, 2.2vw, 10px);
   font-weight: 800;
   line-height: 1.2;
