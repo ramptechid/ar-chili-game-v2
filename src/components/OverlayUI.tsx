@@ -358,9 +358,8 @@ export function OverlayUI() {
       <section id="introScreen" className={`screen${isIntro ? ' active' : ''}`}>
         <img src={asset('assets/ui/bg_home.png')} alt="" className="home-bg-image" aria-hidden="true" />
         <div className="intro-card home-card">
-          <img src={asset('assets/ui/logo_brand.png')}          alt="Indomie"       className="home-brand-image" />
-          <img src={asset('assets/ui/title_cari_cabe_ijo.png')} alt="Cari Cabe Ijo" className="home-title-image" />
-          <img src={asset('assets/ui/ribbon_the_game.png')}     alt="The Game"      className="home-ribbon-image" />
+          <img src={asset('assets/ui/logo_share_result.png')} alt="Cari Cabe Ijo" className="home-logo-image" />
+          <img src={asset('assets/ui/ribbon_the_game.png')}    alt="The Game"      className="home-ribbon-image" />
 
           <div className="how-to-box home-panel">
             <p className="intro-desc">

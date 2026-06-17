@@ -480,6 +480,14 @@
   align-items: center;
 }
 
+.home-logo-image {
+  width: min(72vw, 260px);
+  height: auto;
+  margin-bottom: clamp(4px, 1.5dvh, 14px);
+  display: block;
+  filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.34));
+}
+
 .home-brand-image {
   width: clamp(58px, 18vw, 74px);
   height: auto;
