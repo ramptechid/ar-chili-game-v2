@@ -1129,7 +1129,7 @@ html:not(:fullscreen) .save-panel > .save-image-btn:not(.save-image-btn--seconda
   width: clamp(260px, min(88vw, 50dvh), 320px);
   background: url("../assets/ui/pane_leaderboard_new.png") center / 100% 100% no-repeat;
   margin-top: clamp(-92px, -11.8dvh, -74px);
-  padding: clamp(100px, 14dvh, 116px) clamp(14px, 4vw, 20px) clamp(12px, 2dvh, 18px);
+  padding: clamp(100px, 14dvh, 116px) clamp(14px, 4vw, 20px) clamp(72px, 10dvh, 82px);
   display: flex;
   flex-direction: column;
   align-items: center;
