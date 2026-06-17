@@ -1104,6 +1104,10 @@
   margin-top: clamp(6px, 1.2dvh, 10px);
 }
 
+html:not(:fullscreen) .save-panel > .save-image-btn:not(.save-image-btn--secondary) {
+  margin-top: clamp(60px, 9.4dvh, 82px);
+}
+
 .save-image-btn img {
   width: 100%;
   height: 100%;
