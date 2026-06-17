@@ -935,6 +935,7 @@
 
 .save-panel > label[for="playerInstagramInput"] {
   margin-top: clamp(-4px, -0.7dvh, -1px);
+  transform: translateY(clamp(8px, 1.1dvh, 12px));
 }
 
 .save-result-logo {
@@ -1018,6 +1019,7 @@
   position: relative;
   width: 100%;
   margin-top: clamp(-2px, -0.35dvh, 0px);
+  transform: translateY(clamp(8px, 1.1dvh, 12px));
   display: flex;
   align-items: center;
 }
@@ -1056,7 +1058,7 @@
 }
 
 .save-panel > .name-input {
-  transform: translateY(clamp(-8px, -1.1dvh, -4px));
+  transform: translateY(0);
 }
 
 .email-note {
