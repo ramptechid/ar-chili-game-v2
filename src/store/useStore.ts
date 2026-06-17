@@ -10,6 +10,7 @@ export interface ObjectPosition {
   found: boolean;
   type: number;
   isTarget: boolean;
+  points: number;
   spawnTime: number;
   duration: number;
 }
@@ -32,8 +33,14 @@ interface StoreState {
 
 export const GAME_DURATION_MS = 30_000;
 
-const TOTAL_TARGETS = 10;
-const TOTAL_DECOYS  = 10;
+const TOTAL_DECOYS = 10;
+
+// type 0 = Cabe (1pt), type 10 = pack_cabeijo (2pt), type 11 = pack_cabeijo_jumbo (3pt)
+const TARGET_DEFS = [
+  { type: 0,  points: 1, count: 6 },
+  { type: 10, points: 2, count: 3 },
+  { type: 11, points: 3, count: 1 },
+];
 
 function spawnPos() {
   const r     = 5 + Math.random() * 6;
@@ -49,12 +56,33 @@ function spawnPos() {
 function generatePositions(): ObjectPosition[] {
   const result: ObjectPosition[] = [];
   const now = Date.now();
+  let targetIdx = 0;
 
-  for (let i = 0; i < TOTAL_TARGETS; i++) {
-    result.push({ id: `target-${i}`, ...spawnPos(), found: false, type: 0, isTarget: true, spawnTime: now, duration: 4000 + Math.random() * 6000 });
+  for (const def of TARGET_DEFS) {
+    for (let i = 0; i < def.count; i++) {
+      result.push({
+        id: `target-${targetIdx++}`,
+        ...spawnPos(),
+        found: false,
+        type: def.type,
+        isTarget: true,
+        points: def.points,
+        spawnTime: now,
+        duration: 4000 + Math.random() * 6000,
+      });
+    }
   }
   for (let i = 0; i < TOTAL_DECOYS; i++) {
-    result.push({ id: `decoy-${i}`, ...spawnPos(), found: false, type: Math.floor(Math.random() * 9) + 1, isTarget: false, spawnTime: now, duration: 3000 + Math.random() * 5000 });
+    result.push({
+      id: `decoy-${i}`,
+      ...spawnPos(),
+      found: false,
+      type: Math.floor(Math.random() * 9) + 1,
+      isTarget: false,
+      points: 0,
+      spawnTime: now,
+      duration: 3000 + Math.random() * 5000,
+    });
   }
 
   return result.sort(() => Math.random() - 0.5);
@@ -116,7 +144,7 @@ export const useStore = create<StoreState>((set, get) => ({
     if (hit.isTarget) {
       // Disappear immediately, respawn at new position after 1.5 s
       const newObjects = state.objects.map(o => o.id === id ? { ...o, found: true } : o);
-      set({ score: state.score + 1, objects: newObjects });
+      set({ score: state.score + hit.points, objects: newObjects });
       setTimeout(() => {
         if (get().gameState !== 'playing') return;
         set({

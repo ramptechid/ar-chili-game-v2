@@ -10,6 +10,7 @@
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
     "build:gh": "vite build --base=/ar-chili-game-v2/",
+    "build:server": "vite build --base=/",
     "deploy": "npm run build:gh && npx gh-pages -d dist"
   },
   "dependencies": {

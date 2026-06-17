@@ -85,6 +85,7 @@ export function OverlayUI() {
   const [playAgainOff,   setPlayAgainOff]   = useState(false);
   const [playAgainLabel, setPlayAgainLabel] = useState('MAIN LAGI');
   const [showPlusOne,    setShowPlusOne]    = useState(false);
+  const [plusPoints,     setPlusPoints]     = useState(1);
   const [scoreBumping,   setScoreBumping]   = useState(false);
   const [catchFlash,   setCatchFlash]   = useState(false);
   const [showPauseMenu,    setShowPauseMenu]    = useState(false);
@@ -102,6 +103,8 @@ export function OverlayUI() {
   // ── catch success effects ────────────────────────────────────────────────
   useEffect(() => {
     if (score > prevScoreRef.current) {
+      const gained = score - prevScoreRef.current;
+      setPlusPoints(gained);
       setShowPlusOne(true);
       setScoreBumping(true);
       setCatchFlash(true);
@@ -301,7 +304,7 @@ export function OverlayUI() {
 
         {/* Floating +1 */}
         {showPlusOne && (
-          <div className="plus-one" key={`p1-${score}`}>+1</div>
+          <div className={`plus-one${plusPoints >= 3 ? ' plus-three' : plusPoints >= 2 ? ' plus-two' : ''}`} key={`p1-${score}`}>+{plusPoints}</div>
         )}
 
         <div
@@ -321,7 +324,7 @@ export function OverlayUI() {
 
         {/* Floating +1 */}
         {showPlusOne && (
-          <div className="plus-one" key={`p1-${score}`}>+1</div>
+          <div className={`plus-one${plusPoints >= 3 ? ' plus-three' : plusPoints >= 2 ? ' plus-two' : ''}`} key={`p1-${score}`}>+{plusPoints}</div>
         )}
 
         {/* Score badge below aim ring */}

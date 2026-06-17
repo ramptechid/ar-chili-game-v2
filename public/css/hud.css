@@ -1482,6 +1482,24 @@
   100% { opacity: 0;   transform: translateX(-50%) translateY(-90px) scale(0.75); }
 }
 
+/* +2 pack_cabeijo — orange */
+.plus-one.plus-two {
+  color: #ffb347;
+  text-shadow:
+    0 0 28px rgba(255, 160, 40, 0.95),
+    0 4px 0 rgba(0, 0, 0, 0.45);
+  font-size: clamp(44px, 13vw, 64px);
+}
+
+/* +3 pack_cabeijo_jumbo — magenta */
+.plus-one.plus-three {
+  color: #ff4ecd;
+  text-shadow:
+    0 0 32px rgba(255, 60, 200, 0.95),
+    0 4px 0 rgba(0, 0, 0, 0.5);
+  font-size: clamp(52px, 15vw, 76px);
+}
+
 /* CATCH SUCCESS FLASH */
 .aim-area.catch-flash .target-brackets {
   filter:
