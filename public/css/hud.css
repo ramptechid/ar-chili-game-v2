@@ -315,9 +315,10 @@
 
 #introScreen {
   width: 100vw;
-  height: 100dvh;
+  min-height: 100dvh;
   padding: 0;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   background-color: #041006;
   isolation: isolate;
 }
@@ -463,11 +464,11 @@
 
 /* HOME SCREEN */
 .home-card {
-  width: min(88vw, 390px);
-  max-width: 390px;
-  max-height: calc(100dvh - 16px);
+  width: min(80vw, 320px);
+  max-width: 320px;
+  max-height: none;
   overflow: visible;
-  padding: 0;
+  padding: clamp(16px, 4dvh, 32px) 0 clamp(24px, 5dvh, 40px);
   border: none;
   border-radius: 0;
   background: transparent;
@@ -477,25 +478,25 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(8px, 2dvh, 18px);
+  gap: clamp(10px, 2.5dvh, 20px);
 }
 
 .home-logo-image {
-  width: min(82vw, 340px);
+  width: min(68vw, 240px);
   height: auto;
   display: block;
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.45));
 }
 
 .home-panel-image {
-  width: 100%;
+  width: min(78vw, 300px);
   height: auto;
   display: block;
   filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.35));
 }
 
 .home-start-btn {
-  width: min(78%, 240px);
+  width: min(60vw, 210px);
   min-height: 0;
   height: auto;
   padding: 0;
@@ -1525,17 +1526,22 @@
   }
 
   .home-card {
-    width: min(84vw, 320px);
-    max-height: calc(100dvh - 12px);
+    width: min(78vw, 280px);
     gap: clamp(6px, 1.5dvh, 12px);
+    padding-top: clamp(10px, 2.5dvh, 20px);
+    padding-bottom: clamp(16px, 3dvh, 28px);
   }
 
   .home-logo-image {
-    width: min(78vw, 280px);
+    width: min(62vw, 200px);
+  }
+
+  .home-panel-image {
+    width: min(74vw, 260px);
   }
 
   .home-start-btn {
-    width: min(72%, 200px);
+    width: min(55vw, 180px);
   }
 
   .aim-area {
