@@ -1313,18 +1313,25 @@
   pointer-events: none;
 }
 
-.score-below-value {
+.score-below-anchor {
   position: absolute;
   top: 44%;
   left: 46%;
   transform: translate(-50%, -50%);
   z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-below-value {
   font-size: clamp(36px, 10vmin, 56px);
   font-weight: 900;
   color: #73ff76;
   line-height: 1;
   font-family: "Saira", Arial, Helvetica, sans-serif;
   text-shadow: 0 0 14px rgba(92, 255, 103, 0.5);
+  display: block;
 }
 
 .score-below-value.bump {
