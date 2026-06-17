@@ -35,13 +35,13 @@
 }
 
 .hud-spacer {
-  width: clamp(44px, 11vw, 58px);
+  width: clamp(58px, 15vw, 76px);
   flex-shrink: 0;
 }
 
 .timer-card {
   position: relative;
-  width: clamp(136px, 38vw, 180px);
+  width: clamp(90px, 25vw, 120px);
   aspect-ratio: 239 / 161;
   padding: 0 clamp(14px, 4vw, 22px);
   display: flex;
@@ -1284,8 +1284,8 @@
 
 /* HUD PAUSE BUTTON */
 .hud-pause-btn {
-  width: clamp(44px, 11vw, 58px);
-  height: clamp(44px, 11vw, 58px);
+  width: clamp(58px, 15vw, 76px);
+  height: clamp(58px, 15vw, 76px);
   display: flex;
   align-items: center;
   justify-content: center;
