@@ -1174,7 +1174,7 @@ html:not(:fullscreen) .save-panel > .save-image-btn:not(.save-image-btn--seconda
 }
 
 .lb-subtitle {
-  font-size: clamp(13px, 3.6vw, 16px);
+  font-size: clamp(16px, min(5.2vw, 2.8dvh), 21px);
   font-weight: 500;
   color: #ffffff;
   text-align: center;
