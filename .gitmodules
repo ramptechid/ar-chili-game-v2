@@ -1,0 +1,3 @@
+[submodule "generated"]
+	path = generated
+	url = https://github.com/ramptechid/ar-chili-game-v2.git
