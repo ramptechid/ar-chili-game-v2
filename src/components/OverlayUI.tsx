@@ -91,6 +91,7 @@ export function OverlayUI() {
   const [showPauseMenu,    setShowPauseMenu]    = useState(false);
   const [showLeaderboard,  setShowLeaderboard]  = useState(false);
   const [countdownStep,    setCountdownStep]    = useState<3|2|1|'mulai'|null>(null);
+  const [introVisible,     setIntroVisible]     = useState(true);
 
   const aimRef        = useRef<HTMLDivElement>(null);
   const lastCatchRef  = useRef(0);
@@ -135,6 +136,7 @@ export function OverlayUI() {
 
   // ── result screen setup ──────────────────────────────────────────────────
   useEffect(() => {
+    if (gameState === 'intro') { setIntroVisible(true); return; }
     if (gameState !== 'gameover') return;
     setScoreSaved(false);
     setShowSaveModal(true);
@@ -178,6 +180,8 @@ export function OverlayUI() {
 
   // ── start game handler ───────────────────────────────────────────────────
   async function handleStart() {
+    setIntroVisible(false);
+
     // Android: standard Fullscreen API
     const el = document.documentElement as any;
     try {
@@ -372,7 +376,7 @@ export function OverlayUI() {
       )}
 
       {/* ── INTRO SCREEN ─────────────────────────────────────────────── */}
-      <section id="introScreen" className={`screen${isIntro ? ' active' : ''}`}>
+      <section id="introScreen" className={`screen${isIntro && introVisible ? ' active' : ''}`}>
         <img src={asset('assets/ui/bg_home.png')} alt="" className="home-bg-image" aria-hidden="true" />
         <div className="intro-card home-card">
           <img src={asset('assets/ui/logo_share_result.png')} alt="Cabe Ijo Game" className="home-logo-image" />
