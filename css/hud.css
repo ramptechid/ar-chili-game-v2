@@ -1449,6 +1449,31 @@
   font-size: clamp(52px, 15vw, 76px);
 }
 
+/* COUNTDOWN OVERLAY */
+.countdown-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.countdown-img {
+  width: min(55vw, 220px);
+  height: auto;
+  animation: countdownPop 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  filter: drop-shadow(0 0 32px rgba(100, 255, 100, 0.7));
+}
+
+@keyframes countdownPop {
+  0%   { transform: scale(1.6); opacity: 0; }
+  18%  { transform: scale(1);   opacity: 1; }
+  72%  { transform: scale(1);   opacity: 1; }
+  100% { transform: scale(0.7); opacity: 0; }
+}
+
 /* CATCH SUCCESS FLASH */
 .aim-area.catch-flash .target-brackets {
   filter:
