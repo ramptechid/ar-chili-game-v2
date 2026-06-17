@@ -296,10 +296,21 @@ export function OverlayUI() {
   function handlePauseRestart() {
     setShowPauseMenu(false);
     resetGame();
+    setShowPlusOne(false);
+    setPlusPoints(1);
+    setScoreBumping(false);
+    setCatchFlash(false);
+    prevScoreRef.current = 0;
   }
 
   function handleReset() {
     resetGame();
+    setShowPlusOne(false);
+    setPlusPoints(1);
+    setScoreBumping(false);
+    setCatchFlash(false);
+    setCountdownStep(null);
+    prevScoreRef.current = 0;
   }
 
   const isPlaying  = gameState === 'playing';
