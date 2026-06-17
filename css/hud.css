@@ -917,24 +917,24 @@
   position: static;
   width: 100%;
   height: auto;
-  margin: 0 0 clamp(2px, 0.5dvh, 5px);
+  margin: 0 0 clamp(3px, 0.6dvh, 5px);
   overflow: visible;
   clip: auto;
-  white-space: normal;
+  white-space: nowrap;
   color: #ffffff;
   font-family: "Saira", Arial, Helvetica, sans-serif;
-  font-size: min(30px, 7.4vw);
+  font-size: clamp(8px, min(3vw, 1.45dvh), 12px);
   font-weight: 400;
   line-height: 1;
   text-align: center;
 }
 
 .save-panel > label[for="playerNameInput"] {
-  margin-top: clamp(-3px, -0.5dvh, 0px);
+  margin-top: clamp(-2px, -0.35dvh, 0px);
 }
 
 .save-panel > label[for="playerInstagramInput"] {
-  margin-top: clamp(4px, 0.8dvh, 8px);
+  margin-top: clamp(5px, 0.9dvh, 8px);
 }
 
 .save-result-logo {
