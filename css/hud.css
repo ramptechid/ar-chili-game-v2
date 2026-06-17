@@ -942,7 +942,7 @@
   width: clamp(148px, min(60vw, 25dvh), 212px);
   height: auto;
   display: block;
-  margin: 16px auto clamp(-26px, -3.8dvh, -12px);
+  margin: 32px auto clamp(-26px, -3.8dvh, -12px);
   position: relative;
   z-index: 2;
   pointer-events: none;
