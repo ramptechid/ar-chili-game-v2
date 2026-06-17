@@ -488,7 +488,7 @@
 
 .home-logo-image {
   position: absolute;
-  top: 120px;
+  top: 88px;
   left: 50%;
   transform: translateX(-50%);
   width: min(60vw, 210px);
