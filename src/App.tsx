@@ -29,7 +29,7 @@ export default function App() {
     if (gameState === 'intro') {
       document.body.classList.add('intro-mode');
       document.body.classList.remove('camera-3d-mode');
-    } else if (gameState === 'playing') {
+    } else if (gameState === 'countdown' || gameState === 'playing') {
       document.body.classList.add('game-mode');
       if (!isXR) document.body.classList.add('camera-3d-mode');
     } else {

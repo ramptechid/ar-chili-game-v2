@@ -24,7 +24,7 @@ export function CameraBackground() {
       }
     }
 
-    if (gameState === 'playing' || gameState === 'gameover') {
+    if (gameState === 'countdown' || gameState === 'playing' || gameState === 'gameover') {
       startCamera();
     }
 

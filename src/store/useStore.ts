@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type GameState = 'intro' | 'playing' | 'gameover';
+export type GameState = 'intro' | 'countdown' | 'playing' | 'gameover';
 
 export interface ObjectPosition {
   id: string;
@@ -20,6 +20,9 @@ interface StoreState {
   startTime: number | null;
   elapsedTime: number;
   score: number;
+  scoreCabe: number;
+  scorePack: number;
+  scoreJumbo: number;
   objects: ObjectPosition[];
   playerName: string;
   setGameState: (state: GameState) => void;
@@ -38,8 +41,8 @@ const TOTAL_DECOYS = 10;
 // type 0 = Cabe (1pt), type 10 = pack_cabeijo (2pt), type 11 = pack_cabeijo_jumbo (3pt)
 const TARGET_DEFS = [
   { type: 0,  points: 1, count: 5 },
-  { type: 10, points: 2, count: 3 },
-  { type: 11, points: 3, count: 2 },
+  { type: 10, points: 3, count: 3 },
+  { type: 11, points: 5, count: 2 },
 ];
 
 function spawnPos() {
@@ -93,6 +96,9 @@ export const useStore = create<StoreState>((set, get) => ({
   startTime: null,
   elapsedTime: 0,
   score: 0,
+  scoreCabe: 0,
+  scorePack: 0,
+  scoreJumbo: 0,
   objects: [],
   playerName: '',
 
@@ -104,6 +110,9 @@ export const useStore = create<StoreState>((set, get) => ({
     startTime: Date.now(),
     elapsedTime: 0,
     score: 0,
+    scoreCabe: 0,
+    scorePack: 0,
+    scoreJumbo: 0,
     objects: generatePositions(),
   }),
 
@@ -144,7 +153,11 @@ export const useStore = create<StoreState>((set, get) => ({
     if (hit.isTarget) {
       // Disappear immediately, respawn at new position after 1.5 s
       const newObjects = state.objects.map(o => o.id === id ? { ...o, found: true } : o);
-      set({ score: state.score + hit.points, objects: newObjects });
+      const perType =
+        hit.type === 0  ? { scoreCabe:  state.scoreCabe  + hit.points } :
+        hit.type === 10 ? { scorePack:  state.scorePack  + hit.points } :
+        hit.type === 11 ? { scoreJumbo: state.scoreJumbo + hit.points } : {};
+      set({ score: state.score + hit.points, objects: newObjects, ...perType });
       setTimeout(() => {
         if (get().gameState !== 'playing') return;
         set({
@@ -167,6 +180,9 @@ export const useStore = create<StoreState>((set, get) => ({
     startTime: null,
     elapsedTime: 0,
     score: 0,
+    scoreCabe: 0,
+    scorePack: 0,
+    scoreJumbo: 0,
     objects: [],
   }),
 }));

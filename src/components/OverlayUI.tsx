@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useStore, GAME_DURATION_MS } from '../store/useStore';
+import { useStore, GAME_DURATION_MS, formatHudTime } from '../store/useStore';
 import { submitScore, getLeaderboard, LeaderboardEntry } from '../lib/api';
 import { xrStore } from '../store/xr';
 import { asset } from '../lib/asset';
@@ -70,7 +70,7 @@ async function buildShareBlob(score: number): Promise<Blob> {
 }
 
 export function OverlayUI() {
-  const { gameState, elapsedTime, score, startGame, playerName, setPlayerName, resetGame } = useStore();
+  const { gameState, elapsedTime, score, scoreCabe, scorePack, scoreJumbo, startGame, setGameState, playerName, setPlayerName, resetGame } = useStore();
 
   const [leaderboard,    setLeaderboard]    = useState<LeaderboardEntry[]>([]);
   const [showNotice,     setShowNotice]     = useState(false);
@@ -86,7 +86,9 @@ export function OverlayUI() {
   const [playAgainLabel, setPlayAgainLabel] = useState('MAIN LAGI');
   const [showPlusOne,    setShowPlusOne]    = useState(false);
   const [plusPoints,     setPlusPoints]     = useState(1);
-  const [scoreBumping,   setScoreBumping]   = useState(false);
+  const [scoreCabeBump,  setScoreCabeBump]  = useState(false);
+  const [scorePackBump,  setScorePackBump]  = useState(false);
+  const [scoreJumboBump, setScoreJumboBump] = useState(false);
   const [catchFlash,   setCatchFlash]   = useState(false);
   const [showPauseMenu,    setShowPauseMenu]    = useState(false);
   const [showLeaderboard,  setShowLeaderboard]  = useState(false);
@@ -108,13 +110,14 @@ export function OverlayUI() {
       const gained = score - prevScoreRef.current;
       setPlusPoints(gained);
       setShowPlusOne(true);
-      setScoreBumping(true);
       setCatchFlash(true);
+      if (gained === 1) { setScoreCabeBump(true);  setTimeout(() => setScoreCabeBump(false),  420); }
+      else if (gained === 3) { setScorePackBump(true);  setTimeout(() => setScorePackBump(false),  420); }
+      else if (gained === 5) { setScoreJumboBump(true); setTimeout(() => setScoreJumboBump(false), 420); }
       const t1 = setTimeout(() => setShowPlusOne(false), 900);
-      const t2 = setTimeout(() => setScoreBumping(false), 420);
       const t3 = setTimeout(() => setCatchFlash(false), 280);
       prevScoreRef.current = score;
-      return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+      return () => { clearTimeout(t1); clearTimeout(t3); };
     }
     prevScoreRef.current = score;
   }, [score]);
@@ -136,7 +139,18 @@ export function OverlayUI() {
 
   // ── result screen setup ──────────────────────────────────────────────────
   useEffect(() => {
-    if (gameState === 'intro') { setIntroVisible(true); return; }
+    if (gameState === 'intro') {
+      setIntroVisible(true);
+      setShowPlusOne(false);
+      setPlusPoints(1);
+      setScoreCabeBump(false);
+      setScorePackBump(false);
+      setScoreJumboBump(false);
+      setCatchFlash(false);
+      setCountdownStep(null);
+      prevScoreRef.current = 0;
+      return;
+    }
     if (gameState !== 'gameover') return;
     setScoreSaved(false);
     setShowSaveModal(true);
@@ -171,6 +185,7 @@ export function OverlayUI() {
   };
 
   function runCountdown() {
+    setGameState('countdown');
     setCountdownStep(3);
     setTimeout(() => setCountdownStep(2),      900);
     setTimeout(() => setCountdownStep(1),     1800);
@@ -205,6 +220,7 @@ export function OverlayUI() {
       setTimeout(() => { document.body.style.height = ''; }, 500);
     } catch {}
 
+    // WebXR path — enterAR() handles camera permission internally
     if (navigator.xr) {
       try {
         if (await navigator.xr.isSessionSupported('immersive-ar')) {
@@ -215,6 +231,24 @@ export function OverlayUI() {
       } catch {}
     }
 
+    // Non-WebXR: request camera permission first
+    if (navigator.mediaDevices?.getUserMedia) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' },
+          audio: false,
+        });
+        stream.getTracks().forEach(t => t.stop());
+      } catch {
+        setNoticeTitle('Akses Kamera Diperlukan');
+        setNoticeText('Izinkan akses kamera agar tampilan AR bisa aktif.');
+        setShowNotice(true);
+        setIntroVisible(true);
+        return;
+      }
+    }
+
+    // iOS Safari: device orientation permission
     if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
       try {
         const perm = await (DeviceOrientationEvent as any).requestPermission();
@@ -222,11 +256,13 @@ export function OverlayUI() {
           setNoticeTitle('Akses Motion Diperlukan');
           setNoticeText('Izinkan akses Motion & Orientation di Safari agar objek 3D mengikuti gerakan HP-mu.');
           setShowNotice(true);
+          setIntroVisible(true);
           return;
         }
       } catch {}
     }
 
+    // Semua permission granted → countdown → game timer mulai setelah countdown selesai
     runCountdown();
   }
 
@@ -298,7 +334,9 @@ export function OverlayUI() {
     resetGame();
     setShowPlusOne(false);
     setPlusPoints(1);
-    setScoreBumping(false);
+    setScoreCabeBump(false);
+    setScorePackBump(false);
+    setScoreJumboBump(false);
     setCatchFlash(false);
     prevScoreRef.current = 0;
   }
@@ -307,36 +345,43 @@ export function OverlayUI() {
     resetGame();
     setShowPlusOne(false);
     setPlusPoints(1);
-    setScoreBumping(false);
+    setScoreCabeBump(false);
+    setScorePackBump(false);
+    setScoreJumboBump(false);
     setCatchFlash(false);
     setCountdownStep(null);
     prevScoreRef.current = 0;
   }
 
-  const isPlaying  = gameState === 'playing';
-  const isGameover = gameState === 'gameover';
-  const isIntro    = gameState === 'intro';
+  const isPlaying   = gameState === 'playing';
+  const isCountdown = gameState === 'countdown';
+  const isGameover  = gameState === 'gameover';
+  const isIntro     = gameState === 'intro';
 
   return (
     <>
       {/* ── GAME HUD ─────────────────────────────────────────────────── */}
-      <div id="gameHud" className={`game-hud${isPlaying ? '' : ' hidden'}`}>
+      <div id="gameHud" className={`game-hud${(isPlaying || isCountdown) ? '' : ' hidden'}`}>
 
         <div className="top-hud">
-          {/* Countdown */}
+          <div className="hud-spacer" aria-hidden="true" />
           <div className="timer-card">
-            <div className="timer-label">WAKTU</div>
-            <span className={`timer-value${isUrgent ? ' urgent' : ''}`}>{remainSec}</span>
+            <span className={`timer-value${isUrgent ? ' urgent' : ''}`}>{formatHudTime(remainMs)}</span>
           </div>
-          {/* Pause button */}
-          <button className="hud-pause-btn" onClick={handlePauseClick} aria-label="Jeda game">
-            ⏸
+          <button
+            className="hud-pause-btn"
+            onClick={handlePauseClick}
+            aria-label="Jeda game"
+            disabled={isCountdown}
+            style={isCountdown ? { opacity: 0.4, pointerEvents: 'none' } : undefined}
+          >
+            <img src={asset('assets/ui/btn_pause.png')} alt="" className="hud-pause-img" aria-hidden="true" />
           </button>
         </div>
 
         {/* Floating +1 */}
         {showPlusOne && (
-          <div className={`plus-one${plusPoints >= 3 ? ' plus-three' : plusPoints >= 2 ? ' plus-two' : ''}`} key={`p1-${score}`}>+{plusPoints}</div>
+          <div className={`plus-one${plusPoints >= 5 ? ' plus-three' : plusPoints >= 3 ? ' plus-two' : ''}`} key={`p1-${score}`}>+{plusPoints}</div>
         )}
 
         <div
@@ -354,32 +399,47 @@ export function OverlayUI() {
           <div className="aim-dot" />
         </div>
 
-        {/* Floating +1 */}
-        {showPlusOne && (
-          <div className={`plus-one${plusPoints >= 3 ? ' plus-three' : plusPoints >= 2 ? ' plus-two' : ''}`} key={`p1-${score}`}>+{plusPoints}</div>
-        )}
-
-        {/* Score badge below aim ring */}
-        <div className="score-below-aim">
-          <span className={`score-below-value${scoreBumping ? ' bump' : ''}`} key={`sc-${score}`}>
-            {score}
-          </span>
+        {/* Score badges below aim ring */}
+        <div className="score-frames-wrap">
+          <div className="score-frames-row">
+            {/* Cabe — +1 */}
+            <div className="score-frame-item score-frame-item--cabe">
+              <img src={asset('assets/ui/frame_score_cabe.png')} alt="" className="score-frame-single" aria-hidden="true" />
+              <div className="score-frame-anchor score-frame-anchor--cabe">
+                <span className={`score-frame-num${scoreCabeBump ? ' bump' : ''}`} key={`sc-cabe-${scoreCabe}`}>{scoreCabe}</span>
+              </div>
+            </div>
+            {/* Pack Reguler — +3 */}
+            <div className="score-frame-item score-frame-item--pack">
+              <img src={asset('assets/ui/frame_score_pack_reguler.png')} alt="" className="score-frame-single" aria-hidden="true" />
+              <div className="score-frame-anchor score-frame-anchor--pack">
+                <span className={`score-frame-num${scorePackBump ? ' bump' : ''}`} key={`sc-pack-${scorePack}`}>{scorePack}</span>
+              </div>
+            </div>
+            {/* Pack Jumbo — +5 */}
+            <div className="score-frame-item score-frame-item--jumbo">
+              <img src={asset('assets/ui/frame_score_pack_jumbo.png')} alt="" className="score-frame-single" aria-hidden="true" />
+              <div className="score-frame-anchor score-frame-anchor--jumbo">
+                <span className={`score-frame-num${scoreJumboBump ? ' bump' : ''}`} key={`sc-jumbo-${scoreJumbo}`}>{scoreJumbo}</span>
+              </div>
+            </div>
+          </div>
+          <img src={asset('assets/ui/footer.svg')} alt="" className="hud-footer-img" aria-hidden="true" />
         </div>
       </div>
 
       {/* ── PAUSE MENU ───────────────────────────────────────────────── */}
       {showPauseMenu && (
-        <div className="reset-confirm-overlay" role="dialog" aria-modal="true">
-          <div className="reset-confirm-card">
-            <div className="reset-confirm-icon">⏸</div>
-            <p className="reset-confirm-title">GAME DIJEDA</p>
-            <p className="reset-confirm-sub">Mau lanjut atau mulai dari awal?</p>
-            <div className="reset-confirm-btns">
-              <button className="reset-confirm-yes" onClick={handlePauseResume}>
-                LANJUT MAIN
+        <div className="pause-overlay" role="dialog" aria-modal="true">
+          <img src={asset('assets/ui/BG-Pause-Game.svg')} alt="" className="pause-bg" aria-hidden="true" />
+          <div className="pause-panel-wrap">
+            <img src={asset('assets/ui/panel-pause-game.svg')} alt="" className="pause-panel-img" aria-hidden="true" />
+            <div className="pause-btns">
+              <button className="pause-btn" onClick={handlePauseResume} aria-label="Lanjut Main">
+                <img src={asset('assets/ui/button-lanjut-main.svg')} alt="Lanjut Main" className="pause-btn-img" />
               </button>
-              <button className="reset-confirm-no" onClick={handlePauseRestart}>
-                RESTART
+              <button className="pause-btn" onClick={handlePauseRestart} aria-label="Restart">
+                <img src={asset('assets/ui/button-restart.svg')} alt="Restart" className="pause-btn-img" />
               </button>
             </div>
           </div>
@@ -390,9 +450,9 @@ export function OverlayUI() {
       <section id="introScreen" className={`screen${isIntro && introVisible ? ' active' : ''}`}>
         <img src={asset('assets/ui/bg_home.png')} alt="" className="home-bg-image" aria-hidden="true" />
         <div className="intro-card home-card">
-          <img src={asset('assets/ui/logo_share_result.png')} alt="Cabe Ijo Game" className="home-logo-image" />
+          <img src={asset('assets/ui/logo_share_result.svg')} alt="Cabe Ijo Game" className="home-logo-image" />
           <div className="home-panel-wrap">
-            <img src={asset('assets/ui/panel_petunjuk.png')} alt="Petunjuk" className="home-panel-image" />
+            <img src={asset('assets/ui/panel_petunjuk.svg')} alt="Petunjuk" className="home-panel-image" />
             <button
               id="startBtn"
               className="home-start-btn"

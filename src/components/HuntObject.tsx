@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF, Center, Resize } from '@react-three/drei';
 import * as THREE from 'three';
@@ -34,6 +34,7 @@ export function HuntObject({ id, position, type, isTarget }: HuntObjectProps) {
 
   const url = MODELS[`type${type}`] ?? MODELS.type0;
   const { scene } = useGLTF(url);
+  const cloned = useMemo(() => scene.clone(), [scene]);
 
   useFrame((_state, delta) => {
     if (meshRef.current) {
@@ -49,7 +50,7 @@ export function HuntObject({ id, position, type, isTarget }: HuntObjectProps) {
     >
       <Center>
         <Resize scale={type === 11 ? 2.4 : type === 10 ? 2.0 : isTarget ? 1.8 : 1.5}>
-          <primitive object={scene.clone()} />
+          <primitive object={cloned} />
         </Resize>
       </Center>
     </group>

@@ -29,7 +29,6 @@ function RaycastController() {
           obj = obj.parent;
         }
       }
-      // Nothing found — show miss indicator
       window.dispatchEvent(new CustomEvent('catch-miss'));
     };
 
@@ -40,20 +39,45 @@ function RaycastController() {
   return null;
 }
 
-function XRStateWrapper() {
+function SceneContent() {
   const session = useXR(state => state.session);
   const isXR = session !== undefined;
+  const objects = useStore(state => state.objects);
+  const gameState = useStore(state => state.gameState);
+  const isPlaying = gameState === 'playing';
 
   return (
     <>
       {!isXR && <DeviceOrientationControls />}
       <RaycastController />
+      <ambientLight intensity={0.65} />
+      <directionalLight position={[1.8, 3.2, 1.6]} intensity={2.2} />
+      <directionalLight position={[-2.2, 1.4, -1.4]} color="#cfe8ff" intensity={0.85} />
+      <Suspense fallback={null}>
+        <Environment preset="city" />
+      </Suspense>
+      {isPlaying && (
+        <ErrorBoundary>
+          <Suspense fallback={null}>
+            {objects.map(obj =>
+              !obj.found && (
+                <HuntObject
+                  key={obj.id}
+                  id={obj.id}
+                  position={[obj.x, obj.y, obj.z]}
+                  type={obj.type}
+                  isTarget={obj.isTarget}
+                />
+              )
+            )}
+          </Suspense>
+        </ErrorBoundary>
+      )}
     </>
   );
 }
 
 export function ARCanvas() {
-  const objects = useStore(state => state.objects);
   const gameState = useStore(state => state.gameState);
   const [isXRActive, setIsXRActive] = useState(false);
 
@@ -63,17 +87,15 @@ export function ARCanvas() {
     });
   }, []);
 
-  const isPlaying = gameState === 'playing';
+  // Mount canvas only when active — avoids iOS WebGL context init inside display:none
+  const isActive = gameState === 'countdown' || gameState === 'playing';
+  if (!isActive) return null;
 
-  // Match existing CSS #xrCanvas behavior via inline style:
-  // xr-mode → z-index 1, pointer-events auto
-  // camera-3d-mode → z-index 5, pointer-events none
   const containerStyle: React.CSSProperties = {
     position: 'fixed',
     inset: 0,
     width: '100vw',
     height: '100dvh',
-    display: isPlaying ? 'block' : 'none',
     zIndex: isXRActive ? 1 : 5,
     pointerEvents: isXRActive ? 'auto' : 'none',
     background: 'transparent',
@@ -84,33 +106,15 @@ export function ARCanvas() {
       <Canvas
         camera={{ position: [0, 0, 0], fov: 75 }}
         style={{ width: '100%', height: '100%', background: 'transparent' }}
-        gl={{ alpha: true, antialias: true }}
+        gl={{
+          alpha: true,
+          antialias: false,           // off — iOS berat dengan antialias
+          powerPreference: 'high-performance',
+          failIfMajorPerformanceCaveat: false,
+        }}
       >
         <XR store={xrStore}>
-          {isPlaying && (
-            <>
-              <XRStateWrapper />
-              <ambientLight intensity={0.65} />
-              <directionalLight position={[1.8, 3.2, 1.6]} intensity={2.2} />
-              <directionalLight position={[-2.2, 1.4, -1.4]} color="#cfe8ff" intensity={0.85} />
-              <Environment preset="city" />
-              <ErrorBoundary>
-                <Suspense fallback={null}>
-                  {objects.map(obj =>
-                    !obj.found && (
-                      <HuntObject
-                        key={obj.id}
-                        id={obj.id}
-                        position={[obj.x, obj.y, obj.z]}
-                        type={obj.type}
-                        isTarget={obj.isTarget}
-                      />
-                    )
-                  )}
-                </Suspense>
-              </ErrorBoundary>
-            </>
-          )}
+          <SceneContent />
         </XR>
       </Canvas>
     </div>
