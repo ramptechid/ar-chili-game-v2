@@ -930,11 +930,11 @@
 }
 
 .save-panel > label[for="playerNameInput"] {
-  margin-top: clamp(-2px, -0.35dvh, 0px);
+  margin-top: clamp(-8px, -1.1dvh, -4px);
 }
 
 .save-panel > label[for="playerInstagramInput"] {
-  margin-top: clamp(5px, 0.9dvh, 8px);
+  margin-top: clamp(-4px, -0.7dvh, -1px);
 }
 
 .save-result-logo {
@@ -1017,26 +1017,17 @@
 .instagram-input-wrap {
   position: relative;
   width: 100%;
-  margin-top: clamp(12px, 1.9dvh, 17px);
+  margin-top: clamp(6px, 1dvh, 10px);
   display: flex;
   align-items: center;
 }
 
 .instagram-at {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: rgba(255, 255, 255, 0.65);
-  font-size: 13px;
-  font-weight: 700;
-  font-family: "Saira", Arial, Helvetica, sans-serif;
-  pointer-events: none;
-  z-index: 1;
+  display: none;
 }
 
 .instagram-input {
-  padding-left: 28px !important;
+  padding-left: 14px !important;
 }
 
 .name-input {
