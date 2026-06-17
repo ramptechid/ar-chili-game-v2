@@ -34,12 +34,18 @@
   z-index: 2;
 }
 
+.hud-spacer {
+  width: clamp(44px, 11vw, 58px);
+  flex-shrink: 0;
+}
+
 .timer-card {
   position: relative;
-  width: clamp(112px, 31vw, 150px);
+  width: clamp(136px, 38vw, 180px);
   aspect-ratio: 239 / 161;
-  padding: 0 clamp(18px, 5vw, 26px);
+  padding: 0 clamp(14px, 4vw, 22px);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -1278,30 +1284,33 @@
 
 /* HUD PAUSE BUTTON */
 .hud-pause-btn {
-  width: clamp(48px, 12vw, 60px);
-  height: clamp(48px, 12vw, 60px);
+  width: clamp(44px, 11vw, 58px);
+  height: clamp(44px, 11vw, 58px);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1.5px solid rgba(202, 255, 114, 0.28);
-  color: #caff72;
-  font-size: clamp(18px, 5vw, 24px);
-  line-height: 1;
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
   pointer-events: auto;
   cursor: pointer;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
-  transition: background 0.15s, transform 0.1s;
+  transition: transform 0.1s, opacity 0.1s;
   -webkit-tap-highlight-color: transparent;
   flex-shrink: 0;
 }
 
 .hud-pause-btn:active {
   transform: scale(0.88);
-  background: rgba(202, 255, 114, 0.22);
+  opacity: 0.8;
+}
+
+.hud-pause-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35));
 }
 
 /* SCORE BADGE BELOW AIM RING */
@@ -1337,17 +1346,6 @@
 
 .score-below-value.bump {
   animation: scoreBump 0.38s cubic-bezier(0.36, 1.6, 0.64, 1) forwards;
-}
-
-/* TIMER LABEL */
-.timer-label {
-  font-size: clamp(7px, 1.9vw, 9px);
-  font-weight: 900;
-  color: rgba(255, 255, 255, 0.58);
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  line-height: 1;
-  margin-bottom: 2px;
 }
 
 /* URGENT TIMER (≤10s) */
@@ -1519,7 +1517,7 @@
   }
 
   .timer-card {
-    min-width: 92px;
+    min-width: 108px;
     height: 50px;
   }
 
