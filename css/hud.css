@@ -1046,7 +1046,8 @@
   padding: 0 14px;
   border-radius: 0;
   outline: none;
-  color: white;
+  color: #ffffff;
+  font-family: "Saira", Arial, Helvetica, sans-serif;
   font-size: clamp(10px, min(3.4vw, 2dvh), 14px);
   font-weight: 700;
   text-align: center;
