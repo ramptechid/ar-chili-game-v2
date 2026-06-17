@@ -466,10 +466,9 @@
 .home-card {
   width: min(80vw, 320px);
   max-width: 320px;
-  min-height: 100dvh;
   max-height: none;
   overflow: visible;
-  padding: 0 0 clamp(32px, 7dvh, 60px);
+  padding: clamp(16px, 4dvh, 32px) 0 clamp(24px, 5dvh, 40px);
   border: none;
   border-radius: 0;
   background: transparent;
@@ -480,7 +479,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
   gap: clamp(10px, 2.5dvh, 20px);
 }
 
@@ -503,6 +501,7 @@
   flex-direction: column;
   align-items: center;
   width: min(78vw, 300px);
+  margin-top: clamp(160px, 32dvh, 220px);
 }
 
 .home-panel-image {
