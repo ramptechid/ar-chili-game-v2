@@ -551,37 +551,51 @@ export function OverlayUI() {
 
           {showLeaderboard ? (
             /* ── LEADERBOARD VIEW ── */
-            <div className="modal-lb-wrap">
-              <div className="modal-lb-myscore">
-                <span className="modal-lb-myscore-label">SKORMU</span>
-                <span className="modal-lb-myscore-val">{score}</span>
-                <span className="modal-lb-myscore-unit">CABE</span>
+            <div className="lb-panel">
+              <div className="lb-title">PENCARIAN SELESAI!</div>
+
+              <div className="lb-badge">
+                <span className="lb-badge-label">TOTAL CABE IJO</span>
+                <span className="lb-badge-val">{score}</span>
               </div>
 
-              <div className="modal-lb-title">🏆 LEADERBOARD</div>
+              <div className="lb-subtitle">Peringkat 5 Teratas</div>
 
-              <div className="modal-lb-list">
+              <div className="lb-list">
                 {leaderboard.length === 0 ? (
-                  <div className="modal-lb-empty">Belum ada data</div>
-                ) : leaderboard.slice(0, 10).map((entry, i) => {
-                  const isMe = entry.playerName === playerName.trim();
-                  const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : null;
-                  return (
-                    <div key={entry.id ?? i} className={`modal-lb-row${isMe ? ' modal-lb-me' : ''}`}>
-                      <span className="modal-lb-rank">{medal ?? (i + 1)}</span>
-                      <span className="modal-lb-name">{entry.playerName}</span>
-                      <span className="modal-lb-score">{entry.score}</span>
-                    </div>
-                  );
-                })}
+                  <div className="lb-empty">Belum ada data</div>
+                ) : leaderboard.slice(0, 5).map((entry, i) => (
+                  <div key={entry.id ?? i} className="lb-row">
+                    <span className="lb-row-rank">{i + 1}</span>
+                    <span className="lb-row-name">{entry.playerName}</span>
+                    <span className="lb-row-score">{entry.score}</span>
+                  </div>
+                ))}
               </div>
 
+              <div className="lb-sep" />
+
+              <div className="lb-row lb-myrow">
+                <span className="lb-row-rank">
+                  {leaderboard.findIndex(e => e.playerName === playerName && e.score === score) + 1 || '—'}
+                </span>
+                <span className="lb-row-name">{playerName}</span>
+                <span className="lb-row-score">{score}</span>
+              </div>
+
+              <p className="lb-note">
+                Top 100 akan mendapatkan hadiah! tunggu informasinya di instagram @indomie
+              </p>
+
+              <button className="lb-btn-share" onClick={handleShare}>
+                <img src={asset('assets/ui/button_bagikan_score_new.png')} alt="Bagikan Skor" />
+              </button>
               <button
-                className="primary-btn modal-lb-playbtn"
+                className="lb-btn-play"
                 disabled={playAgainOff}
                 onClick={() => { setShowSaveModal(false); setShowLeaderboard(false); handleReset(); }}
               >
-                {playAgainLabel}
+                <img src={asset('assets/ui/button_main_lagi_new.png')} alt="Main Lagi" />
               </button>
             </div>
           ) : (
