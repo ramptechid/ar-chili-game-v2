@@ -1307,7 +1307,7 @@
 .score-frames-row {
   display: flex;
   align-items: flex-end;
-  gap: clamp(20px, 6vw, 40px);
+  gap: clamp(10px, 4vw, 24px);
 }
 
 .score-frame-item {
@@ -1315,9 +1315,9 @@
   flex-shrink: 0;
 }
 
-.score-frame-item--cabe  { width: clamp(100px, 26vw, 155px); }
-.score-frame-item--pack  { width: clamp(118px, 31vw, 184px); }
-.score-frame-item--jumbo { width: clamp(138px, 36vw, 215px); }
+.score-frame-item--cabe  { width: clamp(58px,  19vw, 112px); }
+.score-frame-item--pack  { width: clamp(106px, 35vw, 208px); }
+.score-frame-item--jumbo { width: clamp(90px,  30vw, 178px); }
 
 .score-frame-single {
   width: 100%;
@@ -1339,7 +1339,7 @@
 .score-frame-anchor--jumbo { top: 60%; left: 72%; }
 
 .score-frame-num {
-  font-size: clamp(24px, 7vw, 44px);
+  font-size: clamp(16px, 5vw, 30px);
   font-weight: 900;
   color: #73ff76;
   line-height: 1;
