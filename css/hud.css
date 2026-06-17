@@ -889,7 +889,7 @@
   min-height: 100dvh;
   max-height: none;
   overflow: visible;
-  padding: calc(env(safe-area-inset-top, 0px) + clamp(36px, 6dvh, 54px)) 0 calc(env(safe-area-inset-bottom, 0px) + 14px);
+  padding: calc(env(safe-area-inset-top, 0px) + clamp(12px, 2.6dvh, 24px)) 0 calc(env(safe-area-inset-bottom, 0px) + 14px);
   border: none;
   border-radius: 0;
   color: #ffffff;
@@ -937,7 +937,7 @@
 .save-panel {
   width: clamp(260px, min(84vw, 46dvh), 318px);
   aspect-ratio: 762 / 1240;
-  padding: clamp(112px, min(18dvh, 30vw), 148px) clamp(34px, min(9vw, 4.8dvh), 44px) clamp(18px, 3dvh, 28px);
+  padding: clamp(98px, min(15.8dvh, 26vw), 130px) clamp(34px, min(9vw, 4.8dvh), 44px) clamp(18px, 3dvh, 28px);
   background: url("../assets/ui/panel_resul_new.png") center / 100% 100% no-repeat;
   display: flex;
   flex-direction: column;
@@ -947,8 +947,8 @@
 .save-total-box {
   width: clamp(88px, min(32vw, 15dvh), 118px);
   aspect-ratio: 293 / 216;
-  margin-bottom: clamp(22px, 3.2dvh, 30px);
-  padding-top: clamp(28px, 4.8dvh, 38px);
+  margin-bottom: clamp(14px, 2.2dvh, 20px);
+  padding-top: clamp(23px, 3.8dvh, 31px);
   background: url("../assets/ui/pane_total.png") center / 100% 100% no-repeat;
   display: flex;
   flex-direction: column;
@@ -992,7 +992,7 @@
 .instagram-input-wrap {
   position: relative;
   width: 100%;
-  margin-top: clamp(18px, 2.8dvh, 24px);
+  margin-top: clamp(12px, 1.9dvh, 17px);
   display: flex;
   align-items: center;
 }
@@ -1068,13 +1068,17 @@
   width: clamp(150px, min(56vw, 24dvh), 194px);
   aspect-ratio: 421 / 87;
   min-height: 0;
-  margin-top: clamp(5px, 1dvh, 8px);
+  margin-top: clamp(14px, 2.3dvh, 20px);
   padding: 0;
   border-radius: 0;
   background: transparent;
   border: none;
   box-shadow: none;
   cursor: pointer;
+}
+
+.save-image-btn--secondary {
+  margin-top: clamp(6px, 1.2dvh, 10px);
 }
 
 .save-image-btn img {
@@ -1671,11 +1675,11 @@
 
   .save-modal-card {
     width: min(76vw, 276px);
-    padding-top: 26px;
+    padding-top: 10px;
   }
 
   .save-panel {
-    padding-top: clamp(104px, 18dvh, 128px);
+    padding-top: clamp(88px, 15dvh, 112px);
     padding-bottom: 18px;
   }
 
