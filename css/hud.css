@@ -1335,10 +1335,10 @@
 .score-below-value {
   position: absolute;
   top: 44%;
-  left: 50%;
+  left: 46%;
   transform: translate(-50%, -50%);
   z-index: 1;
-  font-size: clamp(26px, 7vmin, 40px);
+  font-size: clamp(36px, 10vmin, 56px);
   font-weight: 900;
   color: #73ff76;
   line-height: 1;
@@ -1348,6 +1348,19 @@
 
 .score-below-value.bump {
   animation: scoreBump 0.38s cubic-bezier(0.36, 1.6, 0.64, 1) forwards;
+}
+
+.hud-footer-img {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: clamp(260px, 78vw, 370px);
+  height: auto;
+  display: block;
+  margin-top: 8px;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35));
 }
 
 /* URGENT TIMER (≤10s) */
