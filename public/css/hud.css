@@ -485,6 +485,7 @@
   width: min(55vw, 190px);
   height: auto;
   display: block;
+  margin-top: 96px;
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.45));
 }
 
