@@ -1197,7 +1197,7 @@ html:not(:fullscreen) .save-panel > .save-image-btn:not(.save-image-btn--seconda
   gap: 0 4px;
   padding: clamp(6px, 1dvh, 9px) clamp(10px, 2.8vw, 14px);
   min-height: clamp(30px, 5dvh, 38px);
-  font-size: clamp(10px, 2.8vw, 12px);
+  font-size: clamp(12px, 3.4vw, 15px);
   font-weight: 700;
   color: #ffffff;
 }
@@ -1205,7 +1205,8 @@ html:not(:fullscreen) .save-panel > .save-image-btn:not(.save-image-btn--seconda
 .lb-row-rank {
   font-weight: 900;
   color: #102d15;
-  text-align: center;
+  text-align: left;
+  padding-left: 2px;
 }
 
 .lb-row-name {
