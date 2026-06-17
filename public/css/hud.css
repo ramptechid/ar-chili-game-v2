@@ -1128,7 +1128,7 @@ html:not(:fullscreen) .save-panel > .save-image-btn:not(.save-image-btn--seconda
   position: relative;
   width: clamp(260px, min(88vw, 50dvh), 320px);
   background: url("../assets/ui/pane_leaderboard_new.png") center / 100% 100% no-repeat;
-  margin-top: clamp(-50px, -6.4dvh, -38px);
+  margin-top: clamp(-34px, -4.4dvh, -22px);
   padding: clamp(58px, 8.2dvh, 68px) clamp(14px, 4vw, 20px) clamp(20px, 3dvh, 28px);
   display: flex;
   flex-direction: column;
@@ -1188,7 +1188,9 @@ html:not(:fullscreen) .save-panel > .save-image-btn:not(.save-image-btn--seconda
 }
 
 .lb-row {
-  width: 100%;
+  width: calc(100% + 2 * clamp(14px, 4vw, 20px));
+  margin-left: calc(-1 * clamp(14px, 4vw, 20px));
+  margin-right: calc(-1 * clamp(14px, 4vw, 20px));
   background: url("../assets/ui/panel_name_score_leaderboard.png") center / 100% 100% no-repeat;
   display: grid;
   grid-template-columns: 26px 1fr auto;
