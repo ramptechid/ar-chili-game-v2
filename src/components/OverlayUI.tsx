@@ -297,7 +297,8 @@ export function OverlayUI() {
     setSaveMsg('Menyimpan skor...');
     setSaveMsgCls('');
     try {
-      await submitScore(name, score, ig);
+      const playerRank = await submitScore(name, score, ig);
+      (window as any).__pRank = playerRank;
       setScoreSaved(true);
       setSaveMsg('Skor berhasil disimpan!');
       setSaveMsgCls('success');
@@ -576,7 +577,7 @@ export function OverlayUI() {
 
               <div className="lb-row lb-myrow">
                 <span className="lb-row-rank">
-                  {leaderboard.findIndex(e => e.playerName === playerName && e.score === score) + 1 || '—'}
+                  {(window as any).__pRank || (leaderboard.findIndex(e => e.playerName === playerName && e.score === score) + 1) || '—'}
                 </span>
                 <span className="lb-row-name">{playerName}</span>
                 <span className="lb-row-score">{score}</span>

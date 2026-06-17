@@ -8,7 +8,7 @@ export interface LeaderboardEntry {
   createdAt: number;
 }
 
-export async function submitScore(playerName: string, score: number, instagram = ''): Promise<void> {
+export async function submitScore(playerName: string, score: number, instagram = ''): Promise<number> {
   const res = await fetch(`${API_BASE}/api/submit_score.php`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -18,6 +18,7 @@ export async function submitScore(playerName: string, score: number, instagram =
     const text = await res.text().catch(() => '');
     throw new Error(`Submit failed: ${res.status} ${text}`);
   }
+  return (await res.json()).rank || 0;
 }
 
 export async function getLeaderboard(): Promise<LeaderboardEntry[]> {
