@@ -358,41 +358,16 @@ export function OverlayUI() {
       <section id="introScreen" className={`screen${isIntro ? ' active' : ''}`}>
         <img src={asset('assets/ui/bg_home.png')} alt="" className="home-bg-image" aria-hidden="true" />
         <div className="intro-card home-card">
-          <img src={asset('assets/ui/logo_share_result.png')} alt="Cari Cabe Ijo" className="home-logo-image" />
-          <img src={asset('assets/ui/ribbon_the_game.png')}    alt="The Game"      className="home-ribbon-image" />
-
-          <div className="how-to-box home-panel">
-            <p className="intro-desc">
-              Tangkap cabe ijo sebanyak-banyaknya dalam <b>30 detik</b>!
-              Gerakkan HP-mu untuk mencari, arahkan aim ke cabe, lalu tekan tombol <b>TANGKAP!</b>
-            </p>
-            <img
-              src={asset('assets/ui/line_header_panel_petunjuk.png')}
-              alt=""
-              className="home-panel-line"
-              aria-hidden="true"
-            />
-            <ul className="home-steps">
-              <li>Izinkan akses kamera dan AR</li>
-              <li>Gerakkan kamera untuk menemukan Cabe Ijo</li>
-              <li>Arahkan lingkaran aim tepat ke cabe</li>
-              <li>Tekan tombol TANGKAP! untuk menangkap</li>
-              <li>Kumpulkan sebanyak mungkin dalam 30 detik!</li>
-            </ul>
-            <button
-              id="startBtn"
-              className="primary-btn home-start-btn"
-              aria-label="Mulai Main"
-              onClick={handleStart}
-            >
-              <img
-                src={asset('assets/ui/btn_mulai_main.png')}
-                alt=""
-                className="home-start-image"
-                aria-hidden="true"
-              />
-            </button>
-          </div>
+          <img src={asset('assets/ui/logo_share_result.png')} alt="Cabe Ijo Game" className="home-logo-image" />
+          <img src={asset('assets/ui/panel_petunjuk.png')}    alt="Petunjuk"      className="home-panel-image" />
+          <button
+            id="startBtn"
+            className="home-start-btn"
+            aria-label="Mulai Main"
+            onClick={handleStart}
+          >
+            <img src={asset('assets/ui/button_petunjuk.png')} alt="Mulai Main" className="home-start-image" />
+          </button>
         </div>
       </section>
 
