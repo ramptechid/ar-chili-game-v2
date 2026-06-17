@@ -507,7 +507,7 @@
   width: min(68vw, 230px);
   min-height: 0;
   height: auto;
-  margin-top: -52px;
+  margin-top: -76px;
   position: relative;
   z-index: 2;
   padding: 0;
@@ -1553,7 +1553,7 @@
 
   .home-start-btn {
     width: min(62vw, 200px);
-    margin-top: -42px;
+    margin-top: -62px;
   }
 
   .aim-area {
