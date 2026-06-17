@@ -555,7 +555,6 @@ export function OverlayUI() {
               <div className="lb-title">PENCARIAN SELESAI!</div>
 
               <div className="lb-badge">
-                <span className="lb-badge-label">TOTAL CABE IJO</span>
                 <span className="lb-badge-val">{score}</span>
               </div>
 
@@ -573,7 +572,7 @@ export function OverlayUI() {
                 ))}
               </div>
 
-              <div className="lb-sep" />
+              <img className="lb-sep" src={asset('assets/ui/line_score_new.png')} alt="" />
 
               <div className="lb-row lb-myrow">
                 <span className="lb-row-rank">
