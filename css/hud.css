@@ -504,7 +504,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: min(82vw, 310px);
+  width: min(72vw, 272px);
   margin-top: clamp(148px, 30dvh, 198px);
 }
 
