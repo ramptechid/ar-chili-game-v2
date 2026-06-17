@@ -1068,7 +1068,7 @@
   width: clamp(150px, min(56vw, 24dvh), 194px);
   aspect-ratio: 421 / 87;
   min-height: 0;
-  margin-top: clamp(14px, 2.3dvh, 20px);
+  margin-top: clamp(28px, 4.5dvh, 38px);
   padding: 0;
   border-radius: 0;
   background: transparent;
