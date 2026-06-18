@@ -349,7 +349,7 @@ export function OverlayUI() {
   // ── share score handler ──────────────────────────────────────────────────
   async function handleShare() {
     try {
-      const blob = await buildShareBlob(scoreCabe);
+      const blob = await buildShareBlob(score);
       const file = new File([blob], 'cari-cabe-ijo.png', { type: 'image/png' });
       if (navigator.canShare?.({ files: [file] })) {
         await navigator.share({ title: 'Cari Cabe Ijo', files: [file] });
