@@ -100,6 +100,63 @@ body.xr-mode .camera-overlay {
   display: none !important;
 }
 
+.desktop-block {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  color: #fff;
+  text-align: center;
+  background:
+    linear-gradient(to bottom, rgba(2, 18, 5, 0.42), rgba(0, 8, 2, 0.84)),
+    url("../assets/ui/bg_home_new.png") center / cover no-repeat;
+}
+
+.desktop-block-panel {
+  width: min(420px, 100%);
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+}
+
+.desktop-block-logo {
+  width: min(300px, 78vw);
+  height: auto;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.45));
+}
+
+.desktop-block h1 {
+  margin-top: 4px;
+  font-family: "Saira", Arial, Helvetica, sans-serif;
+  font-size: 32px;
+  line-height: 1;
+  font-weight: 900;
+}
+
+.desktop-block p,
+.desktop-block span {
+  max-width: 320px;
+  font-family: "Saira", Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+.desktop-block-qr {
+  width: 180px;
+  height: 180px;
+  margin-top: 8px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #fff;
+}
+
+body.desktop-block-mode::before {
+  display: none;
+}
+
 #xrCanvas {
   position: fixed;
   inset: 0;
