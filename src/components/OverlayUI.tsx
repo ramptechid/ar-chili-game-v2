@@ -27,6 +27,21 @@ function drawContain(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: nu
   ctx.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
 }
 
+function drawCover(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, w: number, h: number) {
+  const s  = Math.max(w / img.width, h / img.height);
+  const sw = w / s;
+  const sh = h / s;
+  ctx.drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, x, y, w, h);
+}
+
+async function loadOptionalImg(src: string): Promise<HTMLImageElement | null> {
+  try {
+    return await loadImg(src);
+  } catch {
+    return null;
+  }
+}
+
 async function buildShareBlob(score: number): Promise<Blob> {
   const canvas = document.createElement('canvas');
   canvas.width  = 1080;
@@ -34,17 +49,50 @@ async function buildShareBlob(score: number): Promise<Blob> {
   const ctx = canvas.getContext('2d')!;
 
   try {
-    const [bg, panel] = await Promise.all([
-      loadImg(asset('assets/ui/bg_share_social_new.png')),
-      loadImg(asset('assets/ui/panel_score_share_social.png')),
+    await document.fonts?.ready;
+
+    const [bg, logo, panel, footer] = await Promise.all([
+      loadImg(asset('assets/ui/bg_home_new.png')),
+      loadImg(asset('assets/ui/logo_result_new.png')),
+      loadImg(asset('assets/ui/pane_total.png')),
+      loadOptionalImg(asset('assets/ui/footer_text_share.png')),
     ]);
-    ctx.drawImage(bg, 0, 0, 1080, 1920);
-    drawContain(ctx, panel, 0, 0, 1080, 1920);
+
+    drawCover(ctx, bg, 0, 0, 1080, 1920);
+    drawContain(ctx, logo, 180, 210, 720, 600);
+    drawContain(ctx, panel, 255, 790, 570, 390);
+
     ctx.textAlign    = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillStyle    = '#70ff70';
-    ctx.font         = '900 190px Saira, Arial, Helvetica, sans-serif';
-    ctx.fillText(`${score}`, 540, 900);
+    ctx.fillStyle    = '#fff';
+    ctx.font         = '900 58px Saira, Arial, Helvetica, sans-serif';
+    ctx.fillText('TOTAL CABE IJO', 540, 910);
+
+    ctx.fillStyle = '#79ff5a';
+    ctx.font      = '900 210px Saira, Arial, Helvetica, sans-serif';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.32)';
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetY = 8;
+    ctx.fillText(`${score}`, 540, 1045);
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+
+    ctx.fillStyle = '#fff';
+    ctx.font      = '900 56px Saira, Arial, Helvetica, sans-serif';
+    ctx.fillText('YAKIN BISA NGALAHIN AKU?', 540, 1255);
+    ctx.fillText('SINI BUKTIIN.', 540, 1316);
+
+    if (footer) {
+      drawContain(ctx, footer, 205, 1375, 670, 250);
+    } else {
+      ctx.fillStyle = '#fff';
+      ctx.font = '900 86px Saira, Arial, Helvetica, sans-serif';
+      ctx.fillText('MAIN SEKARANG', 540, 1430);
+      ctx.fillStyle = '#073a1a';
+      ctx.font = '900 54px Saira, Arial, Helvetica, sans-serif';
+      ctx.fillText('cabeijogame.com', 540, 1538);
+    }
   } catch {
     ctx.fillStyle = '#041006';
     ctx.fillRect(0, 0, 1080, 1920);
@@ -305,7 +353,7 @@ export function OverlayUI() {
   // ── share score handler ──────────────────────────────────────────────────
   async function handleShare() {
     try {
-      const blob = await buildShareBlob(score);
+      const blob = await buildShareBlob(scoreCabe);
       const file = new File([blob], 'cari-cabe-ijo.png', { type: 'image/png' });
       if (navigator.canShare?.({ files: [file] })) {
         await navigator.share({ title: 'Cari Cabe Ijo', files: [file] });
