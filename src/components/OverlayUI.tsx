@@ -59,8 +59,8 @@ async function buildShareBlob(score: number): Promise<Blob> {
     ]);
 
     drawCover(ctx, bg, 0, 0, 1080, 1920);
-    drawContain(ctx, logo, 180, 210, 720, 600);
-    drawContain(ctx, panel, 255, 790, 570, 390);
+    drawContain(ctx, logo, 180, 160, 720, 600);
+    drawContain(ctx, panel, 255, 855, 570, 390);
 
     ctx.textAlign    = 'center';
     ctx.textBaseline = 'middle';
@@ -69,25 +69,25 @@ async function buildShareBlob(score: number): Promise<Blob> {
     ctx.shadowColor = 'rgba(0, 0, 0, 0.32)';
     ctx.shadowBlur = 10;
     ctx.shadowOffsetY = 8;
-    ctx.fillText(`${score}`, 540, 1038);
+    ctx.fillText(`${score}`, 540, 1103);
     ctx.shadowColor = 'transparent';
     ctx.shadowBlur = 0;
     ctx.shadowOffsetY = 0;
 
     ctx.fillStyle = '#fff';
     ctx.font      = 'italic 900 56px Saira, Arial, Helvetica, sans-serif';
-    ctx.fillText('YAKIN BISA NGALAHIN AKU?', 540, 1255);
-    ctx.fillText('SINI BUKTIIN.', 540, 1316);
+    ctx.fillText('YAKIN BISA NGALAHIN AKU?', 540, 1350);
+    ctx.fillText('SINI BUKTIIN.', 540, 1411);
 
     if (footer) {
-      drawContain(ctx, footer, 205, 1375, 670, 250);
+      drawContain(ctx, footer, 150, 1510, 780, 280);
     } else {
       ctx.fillStyle = '#fff';
       ctx.font = '900 86px Saira, Arial, Helvetica, sans-serif';
-      ctx.fillText('MAIN SEKARANG', 540, 1430);
+      ctx.fillText('MAIN SEKARANG', 540, 1565);
       ctx.fillStyle = '#073a1a';
       ctx.font = '900 54px Saira, Arial, Helvetica, sans-serif';
-      ctx.fillText('cabeijogame.com', 540, 1538);
+      ctx.fillText('cabeijogame.com', 540, 1673);
     }
   } catch {
     ctx.fillStyle = '#041006';
