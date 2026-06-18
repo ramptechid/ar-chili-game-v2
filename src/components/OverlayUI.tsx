@@ -59,7 +59,7 @@ async function buildShareBlob(score: number): Promise<Blob> {
     ]);
 
     drawCover(ctx, bg, 0, 0, 1080, 1920);
-    drawContain(ctx, logo, 180, 160, 720, 600);
+    drawContain(ctx, logo, 160, 143, 760, 635);
     drawContain(ctx, panel, 255, 855, 570, 390);
 
     ctx.textAlign    = 'center';
@@ -75,7 +75,7 @@ async function buildShareBlob(score: number): Promise<Blob> {
     ctx.shadowOffsetY = 0;
 
     ctx.fillStyle = '#fff';
-    ctx.font      = 'italic 900 56px Saira, Arial, Helvetica, sans-serif';
+    ctx.font      = 'italic 700 56px Saira, Arial, Helvetica, sans-serif';
     ctx.fillText('YAKIN BISA NGALAHIN AKU?', 540, 1350);
     ctx.fillText('SINI BUKTIIN.', 540, 1411);
 
