@@ -64,22 +64,18 @@ async function buildShareBlob(score: number): Promise<Blob> {
 
     ctx.textAlign    = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillStyle    = '#fff';
-    ctx.font         = '900 58px Saira, Arial, Helvetica, sans-serif';
-    ctx.fillText('TOTAL CABE IJO', 540, 910);
-
     ctx.fillStyle = '#79ff5a';
-    ctx.font      = '900 210px Saira, Arial, Helvetica, sans-serif';
+    ctx.font      = '900 180px Saira, Arial, Helvetica, sans-serif';
     ctx.shadowColor = 'rgba(0, 0, 0, 0.32)';
     ctx.shadowBlur = 10;
     ctx.shadowOffsetY = 8;
-    ctx.fillText(`${score}`, 540, 1045);
+    ctx.fillText(`${score}`, 540, 1038);
     ctx.shadowColor = 'transparent';
     ctx.shadowBlur = 0;
     ctx.shadowOffsetY = 0;
 
     ctx.fillStyle = '#fff';
-    ctx.font      = '900 56px Saira, Arial, Helvetica, sans-serif';
+    ctx.font      = 'italic 900 56px Saira, Arial, Helvetica, sans-serif';
     ctx.fillText('YAKIN BISA NGALAHIN AKU?', 540, 1255);
     ctx.fillText('SINI BUKTIIN.', 540, 1316);
 
